@@ -104,7 +104,6 @@ function sendProgressUpdate(job)
 {
 	job.total_hashes = TotalHashes;
 
-
 	postMessage(job);
 }
 
