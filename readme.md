@@ -37,7 +37,7 @@ than even a standard CPU miner, and so it is unlikely to generate much income. H
 ***Important***
 ---------------
 
-***Please read***, this miner doesn't implement any long-polling or chaching techniques to minimize unnecessary connections too the pool server.
+***Please read***, this miner doesn't implement any long-polling or caching techniques to minimize unnecessary connections too the pool server.
 Please use it only on a local bitcoin installation while those features are implemented.
 
 
