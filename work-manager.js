@@ -1,18 +1,31 @@
+
+//Global to access worker, start and stop it when needed.
+var worker;
+var tickets = 0;
+var accepted = 0;
+
+
 function begin_mining()
 {
     $.ajax({
-	url: "getwork.php",
+	url: "/getwork/",
 	cache: false,
 	success: function(data){
 	    var response = JSON.parse(data);
 	    
 	    var job = {};
 	    
-	    job.midstate = hexstring_to_binary(response.midstate);
-	    job.data = hexstring_to_binary(response.data);
-	    job.hash1 = hexstring_to_binary(response.hash1);
-	    job.target = hexstring_to_binary(response.target);
+	    console.log(data);	    
+	    console.log(response);
+	    console.log(response.result);
 	    
+	    var payload = response.result;
+	    
+	    job.midstate = hexstring_to_binary(payload.midstate);
+	    job.data = hexstring_to_binary(payload.data);
+	    job.hash1 = hexstring_to_binary(payload.hash1);
+	    job.target = hexstring_to_binary(payload.target);
+	    	    
 	    // Remove the first 512-bits of data, since they aren't used
 	    // in calculating hashes.
 	    job.data = job.data.slice(16);
@@ -20,7 +33,7 @@ function begin_mining()
 	    // Set startdate
 	    job.start_date = new Date().getTime();	    
 	    
-	    var worker = new Worker("miner.js");
+	    worker = new Worker("js/miner.js");
 	    worker.onmessage = onWorkerMessage;
 	    worker.onerror = onWorkerError;
 	    worker.postMessage(job);
@@ -37,18 +50,70 @@ function onWorkerMessage(event) {
 
 	// We've got a Golden Ticket!!!
 	if(job.golden_ticket !== false) {
-		$('#golden-ticket').val(job.golden_ticket);
+                tickets++;
+		$('#golden-ticket').val(tickets);
 
-	    // Submit Work using AJAX.
-	    $.post("submitwork.php", { golden_ticket: job.golden_ticket } );
-		
-	}
+	       // Submit Work using AJAX.
+	       $.post("/submitwork/", { golden_ticket: job.golden_ticket } );
+	       
+	       $.ajax({
+	               url: "/getwork/",
+	               cache: false,
+	               type: "POST",
+	               success: function(data){
+	                              accepted++;
+		                      $('#gt-response').val(accepted);
+		                      // Close previous thread (worker)
+		                      worker.close();
+		                      //  and start new one. 
+		                      begin_mining();            
+	                       }
+	               });
+	       }
 	else {
 		// :'( it was just an update
 		var total_time = (new Date().getTime()) - job.start_date;
 		var hashes_per_second = job.total_hashes * 1000 / total_time;
-		$('#total-hashes').val(job.total_hashes);
-		$('#hashes-per-second').val(hashes_per_second);
+		
+		var total_display;
+		var speed_display;
+		
+		if (job.total_hashes > 1000 )
+		{
+                        if (job.total_hashes > 1000000)
+		              total_display = (job.total_hashes / 1000000).toFixed(2) +" M";
+                        else
+		              total_display = (job.total_hashes / 1000).toFixed(2) + " K";
+                }
+                else
+                        total_display = job.total_hashes;
+
+
+		if (hashes_per_second > 1000 )
+		{
+                        if (hashes_per_second > 1000000)
+		              speed_display = (hashes_per_second / 1000000) +" M/s";
+                        else
+		              
+		              {
+		                      var temp_speed = hashes_per_second / 1000;
+		                      
+		                      if (temp_speed != undefined)
+		                      {
+		                              var new_speed = temp_speed.toFixed(2);
+		                      
+		                              speed_display = new_speed + " K/s";
+		                      }
+		                      else
+		                              speed_display = "0 K/s";
+		              }
+                }
+                else
+                        speed_display = hashes_per_second;
+
+		
+		$('#total-hashes').val(total_display);
+		$('#hashes-per-second').val(speed_display);
 	}
 }
 

@@ -1,0 +1,12 @@
+#Simple config file for the mining pool connection
+#Replace this dummy values with your miner credentials
+
+pool_server = "miner_pool_http_url_with_port"
+pool_user = "miner_user_id"
+pool_password = "miner_password"
+
+
+#End simple config file.
+
+
+

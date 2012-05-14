@@ -20,7 +20,25 @@ import urllib
 import base64
 from django.utils import simplejson as json
 from google.appengine.api import urlfetch
+import logging
+import config
 
+
+def doCall(theCall):
+        logging.debug('Performing a call')
+        username = config.pool_user
+        pw = config.pool_password
+
+        encoded = base64.b64encode(username + ':' + pw)
+        authstr = "Basic "+encoded
+                
+        result = urlfetch.fetch(url=config.pool_server,
+                        payload=theCall,
+                        method=urlfetch.POST,
+                        headers={ 'Authorization':authstr}
+                        )
+        return result
+        
 
 class MainHandler(webapp.RequestHandler):
     def get(self):
@@ -32,53 +50,31 @@ class SubmitWork(webapp.RequestHandler):
         self.response.out.write('Jilaku!')
     
     def post(self):
-
+        logging.info('Submit Work')
         golden_ticket = self.request.get("golden_ticket")
+        logging.debug('Ticket: '.join(golden_ticket))
         
-        username = "your_user"
-        pw = "your_password"
-
-        encoded = base64.b64encode(username + ':' + pw)
-        authstr = "Basic "+encoded
-
-        submitworkCall = '{ "id":"1", "method":"submitwork", "params":[] }'
+        submitworkCall = { "id":"1", "method":"getwork", "params":{"golden_ticket":golden_ticket} }
         
-        submittworkPayload = json.dumps(submitworkCall)
         
-        result = urlfetch.fetch(url='http://pool.bitlc.net:8332',
-                        payload=submitworkCall,
-                        method=urlfetch.POST,
-                        headers={ 'Authorization':authstr}
-                        )
+        result = doCall(submitworkCall)
 
+        
+        logging.debug('return from submitwork: '.join(result.content))
                 
         self.response.out.write(result.content)
 
 
 class GetWork(webapp.RequestHandler):
     def get(self):
-
-        golden_ticket = self.request.get("golden_ticket")
         
-        if golden_ticket <> '':
-                self.response.out.write(golden_ticket)
-                        
-        username = "your_user"
-        pw = "your_password"
-
-        encoded = base64.b64encode(username + ':' + pw)
-        authstr = "Basic "+encoded
-
+        logging.info('Get Work')
+                
         getworkCall = '{ "id":"1", "method":"getwork", "params":[] }'
         
-        getworkPayload = json.dumps(getworkCall)
-        
-        result = urlfetch.fetch(url='http://pool.bitlc.net:8332',
-                        payload=getworkCall,
-                        method=urlfetch.POST,
-                        headers={ 'Authorization':authstr}
-                        )
+        result = doCall(getworkCall)
 
+        logging.debug('Result from getwork: '.join(result.content))
                 
         self.response.out.write(result.content)
 
