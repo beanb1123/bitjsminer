@@ -1,0 +1,34 @@
+application: j-laku
+version: 1
+runtime: python
+api_version: 1
+
+handlers:
+- url: /favicon\.ico
+  static_files: favicon.ico
+  upload: favicon\.ico
+
+- url: /css
+  static_dir: css
+
+- url: /js
+  static_dir: js
+
+
+- url: /index.html
+  static_files: index.html
+  upload: index\.html
+
+- url: /w.html
+  static_files: w.html
+  upload: w\.html
+
+
+
+- url: /
+  static_files: index.html
+  upload: index\.html
+
+
+- url: .*
+  script: main.py

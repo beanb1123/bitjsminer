@@ -1,0 +1,52 @@
+body
+{
+        width: 120px;
+}
+input 
+{
+        font-size: xx-small;
+        border: 1px solid #009EE0;
+        max-width: 100px;
+}
+
+ul 
+{
+        list-style-type: none;
+        padding-left: 0px;
+}
+
+ul li span { 
+        float: left;
+        width: 55px;
+}
+
+#jilaku 
+{
+        font-size: xx-small;
+        width: 120px;
+        height: 200px;
+        border : 1px solid #009EE0;
+        position: relative;
+        float: left;
+        padding-left: 15px;
+}
+
+
+#heading
+{
+        padding-top: 5px;
+}
+
+#headtitle
+{
+        font-size: small;
+}
+
+#footer
+{
+        font-size: xx-small;
+        width: 120px;
+        height: 150px;
+        position: relative;
+        float: left;
+}
