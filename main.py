@@ -45,7 +45,6 @@ class SubmitWork(webapp.RequestHandler):
         
         submittworkPayload = json.dumps(submitworkCall)
         
-        #form_data = urllib.urlencode(form_fields)
         result = urlfetch.fetch(url='http://pool.bitlc.net:8332',
                         payload=submitworkCall,
                         method=urlfetch.POST,
@@ -53,9 +52,7 @@ class SubmitWork(webapp.RequestHandler):
                         )
 
                 
-        #self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(result.content)
-        #self.response.out.write('{"id":"1","error":null,"result":{"midstate":"afb28c2f8db3c5348c5e53fa884f2033656d9140494ee6a66a9bb352878fd7e2","target":"ffffffffffffffffffffffffffffffffffffffffffffffffffffffff00000000","data":"00000001e6723b861ef2b3d5664289b28486e20467545eb51cc1194000000024000000003e9022ac4837223c3cbdec1806e9ae2eee41baae025d5b33640ff339e04d25b44ede284d1a0f61b100000000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000080020000","hash1":"00000000000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000010000"}}')
 
 
 class GetWork(webapp.RequestHandler):
@@ -76,7 +73,6 @@ class GetWork(webapp.RequestHandler):
         
         getworkPayload = json.dumps(getworkCall)
         
-        #form_data = urllib.urlencode(form_fields)
         result = urlfetch.fetch(url='http://pool.bitlc.net:8332',
                         payload=getworkCall,
                         method=urlfetch.POST,
@@ -84,9 +80,7 @@ class GetWork(webapp.RequestHandler):
                         )
 
                 
-        #self.response.headers['Content-Type'] = 'application/json'
         self.response.out.write(result.content)
-        #self.response.out.write('{"id":"1","error":null,"result":{"midstate":"afb28c2f8db3c5348c5e53fa884f2033656d9140494ee6a66a9bb352878fd7e2","target":"ffffffffffffffffffffffffffffffffffffffffffffffffffffffff00000000","data":"00000001e6723b861ef2b3d5664289b28486e20467545eb51cc1194000000024000000003e9022ac4837223c3cbdec1806e9ae2eee41baae025d5b33640ff339e04d25b44ede284d1a0f61b100000000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000080020000","hash1":"00000000000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000010000"}}')
 
 
 
