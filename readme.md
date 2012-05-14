@@ -23,7 +23,7 @@ How do I use it?
 ----------------
 
 Download the full source code. You need a Google App Engine application defined and ready for code to be uploaded.
-Modify the app.yaml according to your application name, modify the config file to use your pool credentials and you're off to mine.
+Modify the app.yaml according to your application name, rename or copy config.py.sample to config.py and modify it to use your pool credentials. Open the "ninja" w.html page in your app path and you're off to mine!
 
 
 
