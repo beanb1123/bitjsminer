@@ -1,4 +1,10 @@
 
+//Global to access worker, start and stop it when needed.
+var worker;
+var tickets = 0;
+var accepted = 0;
+
+
 function begin_mining()
 {
     $.ajax({
@@ -27,7 +33,7 @@ function begin_mining()
 	    // Set startdate
 	    job.start_date = new Date().getTime();	    
 	    
-	    var worker = new Worker("js/miner.js");
+	    worker = new Worker("js/miner.js");
 	    worker.onmessage = onWorkerMessage;
 	    worker.onerror = onWorkerError;
 	    worker.postMessage(job);
@@ -44,7 +50,8 @@ function onWorkerMessage(event) {
 
 	// We've got a Golden Ticket!!!
 	if(job.golden_ticket !== false) {
-		$('#golden-ticket').val(job.golden_ticket);
+                tickets++;
+		$('#golden-ticket').val(tickets);
 
 	       // Submit Work using AJAX.
 	       $.post("/submitwork/", { golden_ticket: job.golden_ticket } );
@@ -54,7 +61,11 @@ function onWorkerMessage(event) {
 	               cache: false,
 	               type: "POST",
 	               success: function(data){
-		                      $('#gt-response').val(data); 
+	                              accepted++;
+		                      $('#gt-response').val(accepted);
+		                      // Close previous thread (worker)
+		                      worker.close();
+		                      //  and start new one. 
 		                      begin_mining();            
 	                       }
 	               });
