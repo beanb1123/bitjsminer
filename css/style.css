@@ -1,40 +1,88 @@
 body
 {
-        width: 120px;
 }
 input 
 {
+        position: relative;
         font-size: xx-small;
-        border: 1px solid #009EE0;
-        max-width: 100px;
+        border: 0px solid #009EE0;
+        max-width: 40px;
+        float: left;
+	margin-top:1px;        
 }
 
 ul 
 {
         list-style-type: none;
-        padding-left: 0px;
+        padding-left: 3px;
+        position: relative;
+        float: left;
+        margin-top: 15px;
+        
 }
+
+ul li
+{
+	margin-bottom: 5px;
+	padding-left: 5px;
+	border: 1px solid #009EE0;
+	border-radius: 3px;
+	max-width: 45px;
+	position: relative;
+	float: left;
+	margin-right: 3px;
+
+}
+
 
 ul li span { 
         float: left;
-        width: 55px;
+        margin-left: -3px;
+        width: 5px;
+        position: relative;
+        float: left;
+	margin-top:2px;        
 }
 
 #jilaku 
 {
-        font-size: xx-small;
-        width: 120px;
-        height: 250px;
-        border : 1px solid #009EE0;
         position: relative;
         float: left;
-        padding-left: 15px;
+        font-size: xx-small;
+        width: 115px;
+        height: 115px;
+        border : 3px solid #009EE0;
+        position: relative;
+        float: left;
+        padding-left: 7px;
+        border-radius: 5px;
+        
 }
 
+#detailsdiv
+{
+        position: relative;
+        float: left;
+        font-size: xx-small;
+        width: 115px;
+        height: 115px;
+        border : 3px solid #009EE0;
+        position: relative;
+        float: left;
+        padding-left: 7px;
+	display: none;
+}
+
+#div_credits
+{
+	display: none;
+	background: white;
+}
 
 #heading
 {
-        padding-top: 5px;
+        padding-top: 7px;
+        padding-left: 5px;
 }
 
 #headtitle
@@ -49,4 +97,95 @@ ul li span {
         height: 150px;
         position: relative;
         float: left;
+}
+
+
+
+#jquery-overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 90;
+	width: 100%;
+	height: 500px;
+}
+#jquery-lightbox {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: 100;
+	text-align: center;
+	line-height: 0;
+}
+#jquery-lightbox a img { border: none; }
+#lightbox-container-image-box {
+	position: relative;
+	background-color: #fff;
+	width: 250px;
+	height: 250px;
+	margin: 0 auto;
+}
+#lightbox-container-image { padding: 10px; }
+#lightbox-loading {
+	position: absolute;
+	top: 40%;
+	left: 0%;
+	height: 25%;
+	width: 100%;
+	text-align: center;
+	line-height: 0;
+}
+#lightbox-nav {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	z-index: 10;
+}
+#lightbox-container-image-box > #lightbox-nav { left: 0; }
+#lightbox-nav a { outline: none;}
+#lightbox-nav-btnPrev, #lightbox-nav-btnNext {
+	width: 49%;
+	height: 100%;
+	zoom: 1;
+	display: block;
+}
+#lightbox-nav-btnPrev { 
+	left: 0; 
+	float: left;
+}
+#lightbox-nav-btnNext { 
+	right: 0; 
+	float: right;
+}
+#lightbox-container-image-data-box {
+	font: 10px Verdana, Helvetica, sans-serif;
+	background-color: #fff;
+	margin: 0 auto;
+	line-height: 1.4em;
+	overflow: auto;
+	width: 100%;
+	padding: 0 10px 0;
+}
+#lightbox-container-image-data {
+	padding: 0 10px; 
+	color: #666; 
+}
+#lightbox-container-image-data #lightbox-image-details { 
+	width: 70%; 
+	float: left; 
+	text-align: left; 
+}	
+#lightbox-image-details-caption { font-weight: bold; }
+#lightbox-image-details-currentNumber {
+	display: block; 
+	clear: left; 
+	padding-bottom: 1.0em;	
+}			
+#lightbox-secNav-btnClose {
+	width: 66px; 
+	float: right;
+	padding-bottom: 0.7em;	
 }

@@ -9,7 +9,7 @@
 
 var TotalHashes = 0;
 
-importScripts('sha2l.js');
+importScripts('sha256.js');
 
 // Function: scanhash
 // 
@@ -35,8 +35,8 @@ function scanhash(midstate, data, hash1, target, progress_report)
 		data[4] = nonce;
 
 		// Now let us see if this nonce results in a Golden Hash
-		var hash = SHA2.core(midstate, data);
-		hash = SHA2.core(SHA_256_INITIAL_STATE, hash.concat(hash1));
+		var hash = sha256_chunk(midstate, data);
+		hash = sha256_chunk(SHA_256_INITIAL_STATE, hash.concat(hash1));
 
 		TotalHashes++;
 

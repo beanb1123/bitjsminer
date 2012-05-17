@@ -1,34 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
-	<HEAD>
-		<SCRIPT src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></SCRIPT>
-		<SCRIPT src="js/sha2l.js"></SCRIPT>
-		<SCRIPT src="js/work-manager.js"></SCRIPT>
+	<head>
+		<script  type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+		<script  type="text/javascript" src="js/jquery.fancybox.pack.js"></script>
+		<script  type="text/javascript" src="js/work-manager.js"></script>
 		<link rel="stylesheet" type="text/css" href="css/style.css" />
-		<title>Jilaku</title>
-	</HEAD>
+		<title>Jilaku</title>	
+		
+		<script type="text/javascript">
+		$(document).ready(function() {
+				$(".details_link").fancybox({
+					prevEffect	: 'none',
+					nextEffect	: 'none',
+					helpers	: {
+						title	: {
+							type: 'outside'
+						},
+						overlay	: {
+							opacity : 0.8,
+							css : {
+								'background-color' : '#000'
+							}
+						},
+						thumbs	: {
+							width	: 50,
+							height	: 50
+						}
+					}
+				});
+		});
+		</script>	
+	</head>
 
-	<BODY>
+	<body>
+	        <div id = "content">
+		</div>
+		
 	        <div id = "jilaku">
 	               <div id="heading">
-	                       <div id = "headtitle">Jilaku</div> micro miner...
+	                       <div id = "headtitle">
+	     				Jilaku
+	     			</div>
+	                       	 micro miner...
 	               </div>
-	               <form>
-		              <ul>
-		                      <li><span>Hashes:</span> <INPUT id="total-hashes" /></li>
-		                      <li><span>Speed:</span> <INPUT id="hashes-per-second" /></li>
-		                      <li><span>Tickets:</span> <INPUT id="golden-ticket" /></li>
-		                      <li><span>Accepted:</span> <INPUT id="gt-response" /></li>
-		      </form>
-		
+	               
+		       	<ul>
+		                      <li><span>H</span> <input  id="total-hashes" disabled="disabled" /></li>
+		                      <li><span>S</span> <input  id="hashes-per-second" disabled="disabled" /></li>
+		                      <li><span>T</span> <input  id="golden-ticket" disabled="disabled" /></li>
+		                      <li><span>A</span> <input  id="gt-response" disabled="disabled" /></li>
+		      	</ul>
+		      
+		      <a id ="details_link" href="#details" onclick="$('#detailsdiv').fancybox();return false;" >Details</a>
 		      <div class="result">
 		
 		      </div>
 		
-		<div id="footer">
-		<p id = "copy">&copy; 2012 Jilaku</p><p id = "credits">(based on <a href="https://github.com/progranism/Bitcoin-JavaScript-Miner">Progranism</a> and <a href="https://github.com/cmaclell/Bitcoin-JavaScript-Miner">Cmaclell)</a></p>
-		</div>
+			<div id="footer">
+			</div>
 		</div>
 		
+		<div id = "detailsdiv">
+			Here will go the details
+		</div>
+
+		<div id = "div_credits">
+			<p id = "credits">
+				(based on <a href="https://github.com/progranism/Bitcoin-JavaScript-Miner">Progranism</a> and <a href="https://github.com/cmaclell/Bitcoin-JavaScript-Miner">Cmaclell)</a>
+			</p>
+		</div>		
 		
-	</BODY>
-</HTML>
+	</body>
+</html>

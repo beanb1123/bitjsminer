@@ -4,6 +4,12 @@ var worker;
 var tickets = 0;
 var accepted = 0;
 
+function safe_add (x, y) {
+	var lsw = (x & 0xFFFF) + (y & 0xFFFF);
+	var msw = (x >> 16) + (y >> 16) + (lsw >> 16);
+	return (msw << 16) | (lsw & 0xFFFF);
+}
+
 
 function begin_mining()
 {
@@ -50,6 +56,9 @@ function onWorkerMessage(event) {
 
 	// We've got a Golden Ticket!!!
 	if(job.golden_ticket !== false) {
+		console.log("We have a Golden Ticket!")
+		console.log(job.golden_ticket)
+		
                 tickets++;
 		$('#golden-ticket').val(tickets);
 
@@ -65,6 +74,8 @@ function onWorkerMessage(event) {
 		                      $('#gt-response').val(accepted);
 		                      // Close previous thread (worker)
 		                      worker.close();
+		                      console.log("Response from submitwork")
+		                      console.log(data)
 		                      //  and start new one. 
 		                      begin_mining();            
 	                       }
@@ -81,9 +92,9 @@ function onWorkerMessage(event) {
 		if (job.total_hashes > 1000 )
 		{
                         if (job.total_hashes > 1000000)
-		              total_display = (job.total_hashes / 1000000).toFixed(2) +" M";
+		              total_display = (job.total_hashes / 1000000).toFixed(0) +"M";
                         else
-		              total_display = (job.total_hashes / 1000).toFixed(2) + " K";
+		              total_display = (job.total_hashes / 1000).toFixed(0) + "K";
                 }
                 else
                         total_display = job.total_hashes;
@@ -92,7 +103,7 @@ function onWorkerMessage(event) {
 		if (hashes_per_second > 1000 )
 		{
                         if (hashes_per_second > 1000000)
-		              speed_display = (hashes_per_second / 1000000) +" M/s";
+		              speed_display = (hashes_per_second / 1000000) +"M/s";
                         else
 		              
 		              {
@@ -102,7 +113,7 @@ function onWorkerMessage(event) {
 		                      {
 		                              var new_speed = temp_speed.toFixed(2);
 		                      
-		                              speed_display = new_speed + " K/s";
+		                              speed_display = new_speed + "K/s";
 		                      }
 		                      else
 		                              speed_display = "0 K/s";
