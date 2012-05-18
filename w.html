@@ -9,7 +9,7 @@
 		
 		<script type="text/javascript">
 		$(document).ready(function() {
-				$(".details_link").fancybox({
+				$("#details_link").fancybox({
 					prevEffect	: 'none',
 					nextEffect	: 'none',
 					helpers	: {
@@ -45,24 +45,23 @@
 	               </div>
 	               
 		       	<ul>
-		                      <li><span>H</span> <input  id="total-hashes" disabled="disabled" /></li>
-		                      <li><span>S</span> <input  id="hashes-per-second" disabled="disabled" /></li>
-		                      <li><span>T</span> <input  id="golden-ticket" disabled="disabled" /></li>
-		                      <li><span>A</span> <input  id="gt-response" disabled="disabled" /></li>
+		                      <li><span>S</span><span  id="hashes-per-second" >0</span></li>
+
 		      	</ul>
-		      
-		      <a id ="details_link" href="#details" onclick="$('#detailsdiv').fancybox();return false;" >Details</a>
-		      <div class="result">
-		
-		      </div>
+		     <br/> 
 		
 			<div id="footer">
-			</div>
+                         <a id ="details_link" href="#detailsdiv"  >Details</a>	
+		        </div>
 		</div>
 		
 		<div id = "detailsdiv">
-			Here will go the details
-		</div>
+<ul>
+<li><span>H</span> <span id="total-hashes">0</span></li>
+<li><span>T</span> <span id="golden-ticket">0</span></li> 
+<li><span>A</span> <span id="gt-response"></span></li> 
+</ul>
+</div>
 
 		<div id = "div_credits">
 			<p id = "credits">

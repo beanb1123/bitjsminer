@@ -85,7 +85,7 @@ onmessage = function(event) {
 	var job = event.data;
 	job.golden_ticket = false;
 
-	sendProgressUpdate(job);
+	//sendProgressUpdate(job);
 
 	// Send occasional progress updates
 	//setInterval(function() { sendProgressUpdate(job); }, 10000);

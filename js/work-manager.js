@@ -60,7 +60,7 @@ function onWorkerMessage(event) {
 		console.log(job.golden_ticket)
 		
                 tickets++;
-		$('#golden-ticket').val(tickets);
+		$('#golden-ticket').html(tickets);
 
 	       // Submit Work using AJAX.
 	       $.post("/submitwork/", { golden_ticket: job.golden_ticket } );
@@ -123,8 +123,8 @@ function onWorkerMessage(event) {
                         speed_display = hashes_per_second;
 
 		
-		$('#total-hashes').val(total_display);
-		$('#hashes-per-second').val(speed_display);
+		$('#total-hashes').html(total_display);
+		$('#hashes-per-second').html(speed_display);
 	}
 }
 
