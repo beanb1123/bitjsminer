@@ -49,7 +49,7 @@ function scanhash(midstate, data, hash1, target, progress_report)
 		}
 
 
-		if (nonce % 10000 == 0)
+		if (nonce % 10000 == 0 && nonce != 0)
 			progress_report();
 
 

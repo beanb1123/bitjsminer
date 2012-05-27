@@ -1,73 +1,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 	<head>
-		<script  type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-		<script  type="text/javascript" src="js/jquery.fancybox.pack.js"></script>
-		<script  type="text/javascript" src="js/work-manager.js"></script>
-		<link rel="stylesheet" type="text/css" href="css/style.css" />
 		<title>Jilaku</title>	
-		
-		<script type="text/javascript">
-		$(document).ready(function() {
-				$("#details_link").fancybox({
-					prevEffect	: 'none',
-					nextEffect	: 'none',
-					helpers	: {
-						title	: {
-							type: 'outside'
-						},
-						overlay	: {
-							opacity : 0.8,
-							css : {
-								'background-color' : '#000'
-							}
-						},
-						thumbs	: {
-							width	: 50,
-							height	: 50
-						}
-					}
-				});
-		});
-		</script>	
 	</head>
-
 	<body>
-	        <div id = "content">
-		</div>
-		
-	        <div id = "jilaku">
-	               <div id="heading">
-	                       <div id = "headtitle">
-	     				Jilaku
-	     			</div>
-	                       	 micro miner...
-	               </div>
-	               
-		       	<ul>
-		                      <li><span>S</span><span  id="hashes-per-second" >0</span></li>
-
-		      	</ul>
-		     <br/> 
-		
-			<div id="footer">
-                         <a id ="details_link" href="#detailsdiv"  >Details</a>	
-		        </div>
-		</div>
-		
-		<div id = "detailsdiv">
-<ul>
-<li><span>H</span> <span id="total-hashes">0</span></li>
-<li><span>T</span> <span id="golden-ticket">0</span></li> 
-<li><span>A</span> <span id="gt-response"></span></li> 
-</ul>
-</div>
-
-		<div id = "div_credits">
-			<p id = "credits">
-				(based on <a href="https://github.com/progranism/Bitcoin-JavaScript-Miner">Progranism</a> and <a href="https://github.com/cmaclell/Bitcoin-JavaScript-Miner">Cmaclell)</a>
-			</p>
-		</div>		
-		
+		<script type="text/javascript" src="js/jilaku.js"></script>
 	</body>
 </html>

@@ -25,7 +25,9 @@ handlers:
   static_files: w.html
   upload: w\.html
 
-
+- url: /cronwork/
+  script: main.py
+  login: admin
 
 - url: /
   static_files: index.html

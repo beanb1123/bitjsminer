@@ -12,6 +12,13 @@ indexes:
 
 - kind: Work
   properties:
+  - name: date_added>
+  - name: solved
+  - name: date_added
+    direction: desc
+
+- kind: Work
+  properties:
   - name: solved
   - name: date_added
     direction: desc

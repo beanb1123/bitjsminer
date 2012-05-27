@@ -19,12 +19,47 @@ from google.appengine.ext import db
 from google.appengine.ext.webapp import util
 from django.utils import simplejson as json
 from google.appengine.api import urlfetch
+from datetime import timedelta
 
 import urllib
 import datetime
 import base64
 import logging
 import config
+import random
+
+
+NUM_SHARDS = 20
+
+class Nonce(db.Model):
+    """Shards for the nonce"""
+    count = db.IntegerProperty(required=True, default=0)
+
+
+def get_nonce():
+    """Retrieve the current sharded nonce."""
+    total = 0
+    for counter in Nonce.all():
+        total += counter.count
+    return total
+
+def increment():
+    if get_nonce() > 0xFFFFFFFF:
+        reset_nonce()
+    
+    """Increment the value for the current nonce."""
+    def txn():
+        index = random.randint(0, NUM_SHARDS - 1)
+        shard_name = "shard" + str(index)
+        counter = Nonce.get_by_key_name(shard_name)
+        if counter is None:
+            counter = Nonce(key_name=shard_name)
+        counter.count += 1
+        counter.put()
+    db.run_in_transaction(txn)
+
+def reset_nonce():
+    db.delete(Nonce.all())	
 
 
 class Work(db.Model):
@@ -103,6 +138,10 @@ class GetWork(webapp.RequestHandler):
         
         logging.info('Get Work')
         
+        current_nonce = get_nonce()
+        logging.info('Current nonce')
+        logging.info(current_nonce)
+        
         #fake_work = '{"result":{"midstate":"9f452bf09f82b78cc99b1277125c77844bbcfa382e294136a73a56a27188f585","data":"00000001e5b5979c98525e7bdde6bc8a4ba5d64ac0acbd7f501f474500000a0b00000000391393c3c94aacbb837347074f6e4fd62aa861536b1db5404f4a8441e214c29e4e051fdb1a0c2a1200000000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000080020000","hash1":"00000000000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000010000","target":"ffffffffffffffffffffffffffffffffffffffffffffffffffffffff00000000"},"error":null,"id":"1"}'
         
         #self.response.out.write(fake_work)        
@@ -110,20 +149,51 @@ class GetWork(webapp.RequestHandler):
         # The Query interface constructs a query using instance methods.
         q = Work.all()
         q.filter("solved =", False)
+        onehour = datetime.datetime.now() - datetime.timedelta(minutes=60)
+        q.filter("date_added >",onehour)
         q.order("-date_added")
+
         
         if q.count() > 0:
                 result = q.get()
                 logging.debug('return from getwork query: '.join(result.jsondata))
+                
+                currentn = get_nonce()
+                logging.info('Current nonce')
+                logging.info(currentn)
+                                
+                json_nonce = {"nonce":currentn}
+                curr_json = json.loads(result.jsondata)
+                curr_json.update(json_nonce)
+                                
+                result.jsondata = json.dumps(curr_json)
+                #.update({'nonce':currentn})
+                
+                logging.info(result.jsondata)
+                
+                increment()
+                
                 self.response.out.write(result.jsondata)
         else:
         
                 getworkCall = '{ "id":"1", "method":"getwork", "params":[] }'        
                 result = doCall(getworkCall)
+                
+                reset_nonce()
+                
+                currentn = get_nonce()
+                
+                
                 logging.debug('Result from getwork: '.join(result.content))
                 json_data = result.content
                 parsed_data = json.loads(result.content)
                 parsed_data = parsed_data["result"]
+
+                json_nonce = {"nonce":currentn}
+                curr_json = json.loads(json_data)
+                curr_json.update(json_nonce)
+                                
+                jsondata = json.dumps(curr_json)
                 
                 key_data = parsed_data["data"]
                 
@@ -135,7 +205,9 @@ class GetWork(webapp.RequestHandler):
                 newWork.target = parsed_data["target"]
                 newWork.solved = False
                 newWork.put()
-                               
+                            
+                increment()
+               
                 self.response.out.write(json_data)
 
 
@@ -143,6 +215,7 @@ class GetWork(webapp.RequestHandler):
 def main():
     application = webapp.WSGIApplication([('/', MainHandler),
                                           ('/getwork/', GetWork),
+                                          ('/cronwork/', GetWork),
                                           ('/submitwork/', SubmitWork) ],
                                          debug=True)
     util.run_wsgi_app(application)
