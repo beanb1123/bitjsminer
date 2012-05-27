@@ -1,0 +1,4 @@
+cron:
+- description: Fake longpolling job
+  url: /cronwork/
+  schedule: every 1 hours
