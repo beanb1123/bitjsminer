@@ -17,9 +17,11 @@
 from google.appengine.ext import webapp
 from google.appengine.ext import db
 from google.appengine.ext.webapp import util
+from google.appengine.api import channel
 from django.utils import simplejson as json
 from google.appengine.api import urlfetch
 from datetime import timedelta
+
 
 import urllib
 import datetime
@@ -27,7 +29,7 @@ import base64
 import logging
 import config
 import random
-
+import uuid
 
 NUM_SHARDS = 20
 
@@ -95,6 +97,14 @@ class MainHandler(webapp.RequestHandler):
         self.response.out.write('Jilaku!')
 
 
+class GetJS(webapp.RequestHandler):
+     def get(self):
+        token = channel.create_channel(base64.urlsafe_b64encode(uuid.uuid4().bytes))
+        template_values = {'token': token}        
+        path = os.path.join(os.path.dirname(__file__), 'jilaku.js')
+        self.response.out.write(template.render(path, template_values))
+     
+
 class SubmitWork(webapp.RequestHandler):
     def get(self):
         self.response.out.write('Jilaku!')
@@ -108,11 +118,6 @@ class SubmitWork(webapp.RequestHandler):
         
         
         result = doCall(submitworkCall)
-
-        
-        logging.debug('return from submitwork: '.join(result.content))
-                
-        self.response.out.write(result.content)
         
         
         # The Query interface constructs a query using instance methods.
@@ -130,6 +135,10 @@ class SubmitWork(webapp.RequestHandler):
                 Getwork.get()
         else:
                 self.response.out.write("Error saving work")
+
+        logging.debug('return from submitwork: '.join(result.content))
+                
+        self.response.out.write(result.content)
         
 
 
@@ -137,7 +146,7 @@ class GetWork(webapp.RequestHandler):
     def get(self):
         
         logging.info('Get Work')
-        
+                
         current_nonce = get_nonce()
         logging.info('Current nonce')
         logging.info(current_nonce)
@@ -216,7 +225,8 @@ def main():
     application = webapp.WSGIApplication([('/', MainHandler),
                                           ('/getwork/', GetWork),
                                           ('/cronwork/', GetWork),
-                                          ('/submitwork/', SubmitWork) ],
+                                          ('/submitwork/', SubmitWork),
+                                          ('/js/jilaku.js', GetJS) ],
                                          debug=True)
     util.run_wsgi_app(application)
 

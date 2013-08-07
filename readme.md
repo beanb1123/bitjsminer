@@ -37,7 +37,7 @@ than even a standard CPU miner, and so it is unlikely to generate much income. H
 ***Important***
 ---------------
 
-***Please read***, this miner doesn't implement any real long-polling or caching techniques to minimize unnecessary connections too the pool server.
+***Please read***, this miner doesn't implement any real long-polling or caching techniques to minimize unnecessary connections to the pool server.
 Instead, it polls every hour the pool server you configured and "replaces" any work holder than an hour with the received one.
 It could well overwrite the same work but 1 connection every hour shouln't disturb too much. Indeed, clients could be working on already solved work.
 It is recommended to use it only on local, personal installations before connecting to big (or even small) pools.

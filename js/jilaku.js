@@ -1,4 +1,11 @@
 (function() {
+	
+	var clientID;
+	
+	if (clientID != undefined)
+		console.log("Client is: "+clientID)
+	else
+		console.log("no clientID");
 
 
 	//Output Jilaku
@@ -9,6 +16,7 @@
 	document.write("	                      <td><span>A&nbsp;</span><span id='gt-response'>0</span></td></tr>"); 
 	document.write("	      	</table>");		
 	document.write("</div>");
+	document.write("<script src='/_ah/channel/jsapi'></script>");
 
 // Localize jQuery variable
 
@@ -206,5 +214,38 @@ function hex_to_byte(hex)
 {
 	return( parseInt(hex, 16));
 }
+
+onMessage = function(m) {
+   noncejson = JSON.parse(m.data);
+   alert("cioa"+noncejson);
+ }
+
+openChannel = function() {
+     var token = '{{ token }}';
+     var channel = new goog.appengine.Channel(token);
+     var handler = {
+          'onopen': function() {},
+          'onmessage': onMessage,
+          'onerror': function() {},
+          'onclose': function() {}
+     };
+     var socket = channel.open(handler);
+     socket.onopen = onOpened;
+     socket.onmessage = onMessage;
+}
+ 
+function j(myClientID)
+{
+	if(typeof(myClientID)==='undefined')
+	{
+		myClientID = 0;
+	}
+	
+	clientID = myClientID;
+	
+	console.log("Output from j(): "+clientID);
+	openChannel();	
+}
+
 
 })(); // We call our anonymous function immediately

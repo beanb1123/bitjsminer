@@ -34,5 +34,8 @@ handlers:
   upload: index\.html
 
 
+- url: /js/jilaku.js
+  script: main.py
+
 - url: .*
   script: main.py
