@@ -1,4 +1,4 @@
-// For fun, and useful reference, this code often uses 
+// For fun, and useful reference, this code often uses
 // strange verbage. Here is a reference:
 //
 // Golden Hash - A final SHA-256 hash which is less than the getwork Target.
@@ -12,7 +12,7 @@ var TotalHashes = 0;
 importScripts('sha256.js');
 
 // Function: scanhash
-// 
+//
 // This function attempts to find a Golden Ticket for the
 // given parameters.
 //
@@ -49,13 +49,15 @@ function scanhash(midstate, data, hash1, target, progress_report)
 		}
 
 
-		if (nonce % 10000 == 0 && nonce != 0)
-			progress_report();
+	  if (nonce % 10000 === 0 && nonce !== 0) {
+	    progress_report();
+          }
 
 
 		// If this was the last possible nonce, quit
-		if (nonce == 0xFFFFFFFF)
-			break;
+	  if (nonce === 0xFFFFFFFF) {
+	    break;
+          }
 
 		// Increment nonce
 		nonce = safe_add(nonce, 1);
@@ -74,7 +76,7 @@ function scanhash(midstate, data, hash1, target, progress_report)
 // Returns Boolean
 function is_golden_hash(hash, target)
 {
-	return hash[7] == 0x00000000;
+	return hash[7] === 0x00000000;
 }
 
 

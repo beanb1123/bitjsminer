@@ -77,6 +77,7 @@ function sha256_chunk(state, data)
 
 	var W = new Array(64);
 	var a, b, c, d, e, f, g, h, i, j;
+  var s0, s1;
 
 	// Assign the state to named variables for clarity
 	a = state[0];
@@ -89,25 +90,26 @@ function sha256_chunk(state, data)
 	h = state[7];
 
 	// Calculate the W values, which are based on the 512-bit input data.
-	for (var i = 0; i < 64; ++i) {
+	for (i = 0; i < 64; ++i) {
 		// For the first 16 rounds, use the raw input data as w
-		if (i < 16)
-			W[i] = data[i];
+	  if (i < 16) {
+	    W[i] = data[i];
+          }
 		else {
-			var s0 = Gamma0(W[i-15]);
-			var s1 = Gamma1(W[i-2]);
+			s0 = Gamma0(W[i-15]);
+			s1 = Gamma1(W[i-2]);
 			// W[i] = W[i-16] + s0 + W[i-7] + s1
 			W[i] = safe_add(safe_add(safe_add(W[i-16], s0), W[i-7]), s1);
 		}
 	}
 
 	// Now perform 64 rounds of SHA-256
-	for (var i = 0; i < 64; ++i) {
-		var s0 = Sigma0(a);
+	for (i = 0; i < 64; ++i) {
+		s0 = Sigma0(a);
 		var maj = Maj(a, b, c);
 		// t2 = s0 + maj
 		var t2 = safe_add(s0, maj);
-		var s1 = Sigma1(e);
+		s1 = Sigma1(e);
 		var ch = Ch(e, f, g);
 		// var t1 = h + s1 + ch + K[i] + W[i]
 		var t1 = safe_add(safe_add(safe_add(safe_add(h, s1), ch), K[i]), W[i]);
