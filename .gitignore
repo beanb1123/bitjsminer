@@ -3,4 +3,5 @@
 config.py
 *.pyc
 config.pyc
+node*
 
