@@ -1,7 +1,7 @@
 (function() {
-	
+
 	var clientID;
-	
+
 	if (clientID != undefined)
 		console.log("Client is: "+clientID)
 	else
