@@ -1,13 +1,130 @@
-(function() {
-// Localize jQuery variable
+var Client = require('stratum').Client;
+var _ = require('stratum').lodash;
 
-  begin_mining();
+var WALLET = '12NJRf2b1DQURwGY11hfRTXFvbRduCckW9';
+var POOL_DOMAIN = 'stratum.bitsolo.net';
+var POOL_PORT = 3334;
+var PASS = 'x'; // Any string is valid
 
+var client = Client.create();
+
+client.connect({
+  host: POOL_DOMAIN,
+  port: POOL_PORT
+}).then(function (socket) {
+  console.log('Connected! lets ask for subscribe');
+  client.jobs = [];
+  // After the subscription we get taken to 'mining.on'
+  return socket.stratumSubscribe('Node.js Stratum');
+});
+
+client.on('error', function(socket){
+  socket.destroy();
+  console.log('Encountered Error');
+  console.log('Connection closed');
+  process.exit(1);
+});
+
+client.on('mining.error', function(msg, socket){
+  console.log(msg);
+});
+
+var submitted = false;
+
+// We have to manually fire a new work notification by extracting the
+// data from the raw socket. For some reason the library doesn't
+// handle giving it to us by default, even though it's required
+// tostart actually mining
+client.socket.on('data', function(stream) {
+  // Need to split up string by lines
+  var res = _.words(stream.toString(), /[^\n]+/g);
+  responses = _.map(res, JSON.parse);
+  // Get the notification data if it exists
+  var notification = _.chain(responses)
+        .filter(function(response) {
+          return response.method === 'mining.notify';
+        })
+        .first()
+        .value();
+  if (notification) {
+    client.emit('mining.notify', notification.params);
+  }
+
+  return;
+});
+
+// the client is a one-way communication, it receives data from the
+// server after issuing commands
+client.on('mining', function(data, socket, type){
+  // console.log(socket);
+
+  if (!socket.authorized) {
+    console.log('Authorizing');
+    socket.stratumAuthorize(WALLET, PASS);
+  }
+
+  return;
+});
+
+// Fired whenever we get notification of work from the server
+// This data is needed for us to actually mine anything
+client.on('mining.notify', function(data) {
+  console.log('We got new work!');
+  console.log('Job ID: ' + data[0]);
+  console.log('Clean Jobs: ' +data[8] );
+  var clear = data[8];
+
+  function _pushJob() {
+    // Add the new job
+    console.log('pushing a new job');
+    client.jobs.push({
+      id: data[0],
+      previousHeader: data[1],
+      coinbase1: data[2],
+      coinbase2: data[3],
+      merkleBranches: data[4],
+      blockVersion: data[5],
+      nBit: data[6],
+      nTime: data[7]
+    });
+  }
+  // Reset jobs if cleared
+  if (clear) {
+    client.jobs = [];
+  }
+
+  if (client.jobs.length === 0) {
+    _pushJob();
+    client.emit('resetjobs');
+  } else {
+    _pushJob();
+  }
+
+  return;
+});
+
+// Abandon the current job and start mining the next one
+client.on('resetjobs', function() {
+  // STOP MINER
+  // miner.stop
+  // GIVE MINER NEW JOB
+  // miner.start(client.jobs.pop())
+  console.log(client.jobs.pop());
+  return;
+});
+
+// These stratum* methods return from promises as soon as their sent,
+// they DONT return back when they fucking get a response. Don't know
+// why, but that's just the case, so we need a better way to wait for
+// things.
+
+// They also are just fancy ways of calling stratumSend
 
 //Global to access worker, start and stop it when needed.
 var worker;
 var accepted = 0;
 
+// Real integer addition in JavaScript
 function safe_add (x, y) {
 	var lsw = (x & 0xFFFF) + (y & 0xFFFF);
 	var msw = (x >> 16) + (y >> 16) + (lsw >> 16);
@@ -15,13 +132,11 @@ function safe_add (x, y) {
 }
 
 
-function begin_mining()
+function begin_mining(response)
 {
-    jQuery.ajax({
-	url: "/getwork/",
-	cache: false,
-	success: function(data){
-	    var response = JSON.parse(data);
+  // Response looks like the follow according to Stratum documentation:
+  // [[["mining.set_difficulty", "subscription id 1"], ["mining.notify", "subscription id 2"]], "extranonce1", extranonce2_size]
+
 
 	    var job = {};
 
@@ -48,11 +163,6 @@ function begin_mining()
 	    worker.postMessage(job);
 
 	}
-    });
-
-  console.log("Miner started...");
-
-}
 
 function onWorkerMessage(event) {
 	var job = event.data;
@@ -173,5 +283,3 @@ openChannel = function() {
      socket.onopen = onOpened;
      socket.onmessage = onMessage;
 };
-
-})(); // We call our anonymous function immediately
