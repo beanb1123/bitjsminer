@@ -1,7 +1,7 @@
 var Client = require('stratum').Client;
 var _ = require('stratum').lodash;
 
-var SHA = require('sha256.js');
+var SHA = require('./sha256.js');
 
 var WALLET = '12NJRf2b1DQURwGY11hfRTXFvbRduCckW9';
 var POOL_DOMAIN = 'stratum.bitsolo.net';
