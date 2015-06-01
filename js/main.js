@@ -1,6 +1,8 @@
 var Client = require('stratum').Client;
 var _ = require('stratum').lodash;
 
+var SHA = require('sha256.js');
+
 var WALLET = '12NJRf2b1DQURwGY11hfRTXFvbRduCckW9';
 var POOL_DOMAIN = 'stratum.bitsolo.net';
 var POOL_PORT = 3334;
@@ -124,14 +126,6 @@ client.on('resetjobs', function() {
 var worker;
 var accepted = 0;
 
-// Real integer addition in JavaScript
-function safe_add (x, y) {
-	var lsw = (x & 0xFFFF) + (y & 0xFFFF);
-	var msw = (x >> 16) + (y >> 16) + (lsw >> 16);
-	return (msw << 16) | (lsw & 0xFFFF);
-}
-
-
 function begin_mining(response)
 {
   // Response looks like the follow according to Stratum documentation:
@@ -251,7 +245,7 @@ function hexstring_to_binary(str)
 		var number = 0x00000000;
 		
 		for(var j = 0; j < 4; ++j) {
-			number = safe_add(number, hex_to_byte(str.substring(i + j*2, i + j*2 + 2)) << (j*8));
+		  number = SHA.safe_add(number, hex_to_byte(str.substring(i + j*2, i + j*2 + 2)) << (j*8));
 		}
 
 		result.push(number);
@@ -270,16 +264,3 @@ onMessage = function(m) {
    alert("cioa"+noncejson);
 };
 
-openChannel = function() {
-     var token = '{{ token }}';
-     var channel = new goog.appengine.Channel(token);
-     var handler = {
-          'onopen': function() {},
-          'onmessage': onMessage,
-          'onerror': function() {},
-          'onclose': function() {}
-     };
-     var socket = channel.open(handler);
-     socket.onopen = onOpened;
-     socket.onmessage = onMessage;
-};

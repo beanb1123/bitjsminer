@@ -1,3 +1,4 @@
+
 // For fun, and useful reference, this code often uses
 // strange verbage. Here is a reference:
 //
@@ -5,11 +6,10 @@
 // Golden Ticket - The nonce that gave rise to a Golden Hash.
 //
 // This is in reference to the classic story of Willy Wonka and the Chocolate Factory.
-
+var SHA = require('sha256.js');
 
 var TotalHashes = 0;
 
-importScripts('sha256.js');
 
 // Function: scanhash
 //
@@ -35,8 +35,8 @@ function scanhash(midstate, data, hash1, target, progress_report)
 		data[4] = nonce;
 
 		// Now let us see if this nonce results in a Golden Hash
-		var hash = sha256_chunk(midstate, data);
-		hash = sha256_chunk(SHA_256_INITIAL_STATE, hash.concat(hash1));
+	  var hash = SHA.sha256_chunk(midstate, data);
+	  hash = SHA.sha256_chunk(SHA.SHA_256_INITIAL_STATE, hash.concat(hash1));
 
 		TotalHashes++;
 
@@ -60,7 +60,7 @@ function scanhash(midstate, data, hash1, target, progress_report)
           }
 
 		// Increment nonce
-		nonce = safe_add(nonce, 1);
+	  nonce = SHA.safe_add(nonce, 1);
 	}
 
 	return false;
