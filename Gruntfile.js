@@ -2,6 +2,7 @@
 
 module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-contrib-watch');
 
   // Project configuration.
   grunt.initConfig({
@@ -29,18 +30,9 @@ module.exports = function(grunt) {
         files: '<%= jshint.lib.src %>',
         tasks: ['jshint:lib']
       }
-    },
-
-    browserify: {
-      vendor: {
-        src: ['<%= jshint.lib.src %>'],
-        dest: 'browserify/bundle.js'
-      }
     }
   });
 
-  grunt.loadNpmTasks('grunt-browserify');
   // Default task.
-  grunt.registerTask('default', ['jshint', 'browserify:vendor']);
-
+  grunt.registerTask('default', ['jshint']);
 };
