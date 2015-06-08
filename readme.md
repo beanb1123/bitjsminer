@@ -1,66 +1,19 @@
+# Is this done yet?
+Nope, but it should be ready by 6/8/2015 11:59 PM
+
 Bitcoin JavaScript Miner
 ========================
 
-**Current Status**: Alpha
-
-
 What is it?
 -----------
-
-This is a Bitcoin Miner implemented in JavaScript. 
-Originally by [progranism](https://github.com/progranism/Bitcoin-JavaScript-Miner), improved by [kr105rlz](https://github.com/kr105rlz)
-and [cmaclell](https://github.com/cmaclell/Bitcoin-JavaScript-Miner), here modified by me to work on [GAE](http://appengine.google.com).
-
-It is intended for use
-in a [Bitcoin Mining Pool](https://en.bitcoin.it/wiki/Pooled_mining), but
-its main purpose is to act as a learning tool and micro web miner. Feel free to browse the commented source-code
-and learn more about how Bitcoins are mined.
-
-[Learn more about Bitcoin](http://www.bitcoin.org/ "Bitcoin")
-
+It's a bitcoin miner that works from the browser. It utilizes the Stratum protocol to connect to a mining pool and will mine for as long as you want.
 
 How do I use it?
 ----------------
 
-Download the full source code. You need a Google App Engine application defined and ready for code to be uploaded.
-Modify the app.yaml according to your application name, rename or copy config.py.sample to config.py and modify it to use your pool credentials. Open the "ninja" w.html page in your app path and you're off to mine!
-
-
+All you need to do is open the webpage and it should start mining right away. You can configure the wallet addresss to something that isn't mine. If you were sneaky, you could even repackage this so that it works as an XSS attack. Turn a poorly secured website's visitors into your personal mining rig.
 
 Does It Really Mine Bitcoins?
 -----------------------------
 
-Yes, though it isn't very good at mining! It operates much slower
-than even a standard CPU miner, and so it is unlikely to generate much income. However it can be loaded on a website so your visitors can calculate bitcoins for you.
-
-
-***Important***
----------------
-
-***Please read***, this miner doesn't implement any real long-polling or caching techniques to minimize unnecessary connections to the pool server.
-Instead, it polls every hour the pool server you configured and "replaces" any work holder than an hour with the received one.
-It could well overwrite the same work but 1 connection every hour shouln't disturb too much. Indeed, clients could be working on already solved work.
-It is recommended to use it only on local, personal installations before connecting to big (or even small) pools.
-
-
-Current Development Status
---------------------------
-
-Currently being heavily worked on.
-
-
-To Do
------
-
-1) User (client) management
-
-
-
-Thank You
----------
-
-If you like this project, feel free contribute code, comments, and even Bitcoin donations.
-
-*Donation Address for cmaclell*: 19ZhyDExua1b6ZzMMfvPdGpQTRnjkWZTYj
-*Donation Address for kr105rlz*: 16TUsJ6ToAxp1a9RmTCGnox99MocGSYLaD
-
+Yes, but it's so inneficient that you may not actually be able to mine anything depending on how the pool distributes shares. In order for it to be effective you may have to conistently run it to make sure you're constantly getting shares, so pick an appropriate mining pool if you want to even attempt to actually make some bitcoins.
