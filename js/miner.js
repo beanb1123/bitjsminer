@@ -6,7 +6,7 @@
 // Golden Ticket - The nonce that gave rise to a Golden Hash.
 //
 // This is in reference to the classic story of Willy Wonka and the Chocolate Factory.
-var SHA = require('sha256.js');
+var SHA = require('./sha256.js');
 
 var TotalHashes = 0;
 
