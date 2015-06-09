@@ -12,26 +12,35 @@ module.exports = function(grunt) {
       lib: {
         src: ['js/**/*.js']
       },
-    options: {
-      curly: true,
-      eqeqeq: true,
-      eqnull: true,
-      node: true,
-      funcscope: true
+      options: {
+        curly: true,
+        eqeqeq: true,
+        eqnull: true,
+        node: true,
+        funcscope: true
+      }
     },
+
     watch: {
       gruntfile: {
         tasks: ['jshint:gruntfile']
       },
       lib: {
         files: '<%= jshint.lib.src %>',
-        tasks: ['jshint:lib', 'nodeunit']
+        tasks: ['jshint:lib']
       }
-    }
+    },
+
+    browserify: {
+      vendor: {
+        src: ['<%= jshint.lib.src %>'],
+        dest: 'browserify/bundle.js'
+      }
     }
   });
 
+  grunt.loadNpmTasks('grunt-browserify');
   // Default task.
-  grunt.registerTask('default', ['jshint']);
+  grunt.registerTask('default', ['jshint', 'browserify:vendor']);
 
 };
