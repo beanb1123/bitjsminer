@@ -41,6 +41,9 @@ client.connect({
   port: POOL_PORT
 }).then(function (socket) {
   client.jobs = [];
+
+  console.log('Successfully connected to the pool');
+  console.log();
   // After the subscription we get taken to 'mining.on'
   return socket.stratumSubscribe('Node.js Stratum');
 });
@@ -106,8 +109,7 @@ client.on('mining', function(data, socket, type){
 client.on('mining.notify', function(data) {
   var clear = data[8];
 
-  // Add the new job
-  new miner.Miner(client, {
+  var job = {
     id: data[0],
     previousHeader: data[1],
     coinbase1: data[2],
@@ -118,7 +120,14 @@ client.on('mining.notify', function(data) {
     nTime: data[7],
     extranonce1: client.subscription[1],
     extranonce2_size: client.subscription[2]
-  });
+  }
+
+  console.log('Received a new mining job:')
+  console.log(job);
+  console.log();
+
+  // Add the new job
+  new miner.Miner(client, job, argv.log, argv.interval);
 
   return;
 });

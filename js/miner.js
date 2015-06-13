@@ -10,12 +10,14 @@ var SHA = require('./sha256.js');
 var _ = require('lodash');
 // A miner is given a job and a client, and when it finishes mining the job will
 // auotmatically submit on behalf of the client.
-exports.Miner = function(client, job) {
+exports.Miner = function(client, job, log, logInterval) {
   this.client = client;
   this.job = job;
-
-  this.TotalHashes = 0;
+  this.nonce;
+  this.logInterval = logInterval ? logInterval : 10000;
   this.mining = false; // Whether or not we should continue to mine
+
+  var that = this;
 
   // Function: scanhash
   //
@@ -31,59 +33,77 @@ exports.Miner = function(client, job) {
   // target is 256-bits:		Array of 8, 32-bit numbers
   //
   // Returns a Golden Ticket (32-bit number) or false
-  function scanhash(midstate, data, hash1, target)
-  {
-          // Nonce is a number which starts at 0 and increments until 0xFFFFFFFF
-          var nonce = 0;
+  function scanhash(midstate, data, hash1, target) {
+    // Nonce is a number which starts at 0 and increments until 0xFFFFFFFF
+    that.nonce = 0;
 
-          while(true) {
-                  // The nonce goes into the 4th 32-bit word
-                  data[4] = nonce;
+    while(true) {
+      // The nonce goes into the 4th 32-bit word
+      data[4] = that.nonce;
+      // If logging is enabled, output the current nonce. This will dramatically
+      // slow down performance since the console can't keep up with the number
+      // of hahses
+      if (log) {
+        that.logInterval--;
+        if (that.logInterval <= 0) {
+          console.log('Current nonce: ' + that.nonce.toString(16));
+          that.logInterval = logInterval; // Resets to default value
+        }
+      }
 
-                  // Now let us see if this nonce results in a Golden Hash
-            var hash = SHA.sha256_chunk(midstate, data);
-            hash = SHA.sha256_chunk(SHA.SHA_256_INITIAL_STATE, hash.concat(hash1));
+      // Now let us see if this nonce results in a Golden Hash
+      var hash = SHA.sha256_chunk(midstate, data);
+      hash = SHA.sha256_chunk(SHA.SHA_256_INITIAL_STATE, hash.concat(hash1));
 
-            this.TotalHashes++;
+      if (is_golden_hash(hash, target)) {
+        // I've got a Golden Ticket!!!
+        // How many Bitcoins for the Geese?
 
-                  if (is_golden_hash(hash, target)) {
-                          // I've got a Golden Ticket!!!
-                          // How many Bitcoins for the Geese?
+        // The current nonce is thus a Golden Ticket
+        console.log('Found the nonce for this block!');
+        return that.nonce;
+      }
 
-                          // The current nonce is thus a Golden Ticket
-                          return nonce;
-                  }
+      // If this was the last possible nonce, quit
+      if (that.nonce === 0xFFFFFFFF) {
+        break;
+      }
 
-            // If this was the last possible nonce, quit
-            if (nonce === 0xFFFFFFFF) {
-              break;
-            }
+      // Increment nonce
+      that.nonce = SHA.safe_add(that.nonce, 1);
+    }
 
-            // Increment nonce
-            nonce = SHA.safe_add(nonce, 1);
-          }
-
-          return false;
+    return false;
   }
 
   // Convert the job into parameters for scanhash
   var coinbaseStr = job.coinbase1 + job.extranonce1 + job.extranonce2 + job.coinbase2;
   var coinbase = hexstring_to_binary(coinbaseStr);
   var merkleHash = _.reduce(job.merkleBranches, function(hash, merkle) {
-          return SHA.sha256_chunk(hash, merkle);
+    return SHA.sha256_chunk(hash, merkle);
   }, SHA.SHA_256_INITIAL_STATE);
 
+  // This is where we begin actaully incrementing the nonce and start the mining process
+  console.log('Beginning mining in 3 seconds');
+  console.log('Press Control-C to cancel at anytime');
+  console.log();
 
-  var result = scanhash(hexstring_to_binary(job.previousHeader), coinbase, merkleHash, hexstring_to_binary(client.target));
-  var nonce = 'FFFFFFFF';
-  if (result) {
-    console.log('Block completed, submitting');
-    nonce = result;
-  } else {
-    console.log('Share completed, submitting');
-  }
+  setTimeout(function(){
+    console.log('Mining has begun!');
 
-  client.submit('miner', id, job.extranonce2, job.nTime, nonce);
+    var result = scanhash(hexstring_to_binary(job.previousHeader), coinbase, merkleHash, hexstring_to_binary(client.target));
+    var nonce = 'FFFFFFFF';
+    if (result) {
+      console.log('Block completed, submitting');
+      nonce = result;
+    } else {
+      console.log('Share completed, submitting');
+    }
+
+    client.submit('miner', id, job.extranonce2, job.nTime, nonce);
+
+    return;
+  }, 3000);
 };
 
 // Tests if a given hash is a less than or equal to the given target.
@@ -104,16 +124,16 @@ function hexstring_to_binary(str)
 {
   var result = [];
 
-	for(var i = 0; i < str.length; i += 8) {
-		var number = 0x00000000;
-		for(var j = 0; j < 4; ++j) {
-		  number = SHA.safe_add(number, hex_to_byte(str.substring(i + j*2, i + j*2 + 2)) << (j*8));
-		}
+  for(var i = 0; i < str.length; i += 8) {
+    var number = 0x00000000;
+    for(var j = 0; j < 4; ++j) {
+      number = SHA.safe_add(number, hex_to_byte(str.substring(i + j*2, i + j*2 + 2)) << (j*8));
+    }
 
-		result.push(number);
-	}
+    result.push(number);
+  }
 
-	return result;
+  return result;
 }
 
 function hex_to_byte(hex)
