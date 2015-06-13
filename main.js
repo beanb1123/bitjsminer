@@ -1,14 +1,38 @@
 var Client = require('stratum').Client;
 var _ = require('stratum').lodash;
 var bigInt = require('big-integer');
+var argv = require('minimist')(process.argv.slice(2)); // Processing for command line options
 
-var SHA = require('./sha256.js');
-var miner = require('./miner.js');
+var SHA = require('./js/sha256.js');
+var miner = require('./js/miner.js');
 
-var WALLET = '12NJRf2b1DQURwGY11hfRTXFvbRduCckW9';
-var POOL_DOMAIN = 'stratum.bitsolo.net';
-var POOL_PORT = 3334;
-var PASS = 'x'; // Any string is valid
+// wallet and mining options
+var WALLET;
+var POOL_DOMAIN;
+var POOL_PORT;
+
+if (argv.wallet === undefined && argv.domain === undefined && argv.port === undefined) {
+  // Default options
+  WALLET = '12NJRf2b1DQURwGY11hfRTXFvbRduCckW9';
+  POOL_DOMAIN = 'stratum.bitsolo.net';
+  POOL_PORT = 3334;
+  console.log('Proceeding with default pool and wallet');
+} else if (argv.wallet && argv.domain && argv.port) {
+  // Custom wallet selections
+  WALLET = argv.wallet;
+  POOL_DOMAIN = argv.wallet;
+  POOL_PORT = argv.port;
+} else {
+  console.log('Oops! If WALLET, PORT, or DOMAIN are passed in as options then they all must also be specified');
+  process.exit(1);
+  var WALLET = argv.wallet;
+}
+
+console.log('Pool: ' + POOL_DOMAIN + ':' + POOL_PORT);
+console.log('Wallet: ' + WALLET);
+console.log();
+// Passwords are optional many times, and so there's no need to require it when specifying a pool
+var PASS = argv.password ? argv.password : 'x'; // Any string is valid
 
 var client = Client.create();
 
@@ -31,8 +55,6 @@ client.on('error', function(socket){
 client.on('mining.error', function(msg, socket){
   console.log(msg);
 });
-
-var submitted = false;
 
 // We have to manually fire a new work notification by extracting the
 // data from the raw socket. For some reason the library doesn't
@@ -67,11 +89,12 @@ client.on('mining.set_difficulty', function(data) {
   return;
 });
 
-// the client is a one-way communication, it receives data from the
+// The client is a one-way communication, it receives data from the
 // server after issuing commands
 client.on('mining', function(data, socket, type){
   if (!socket.authorized) {
-    console.log('Authorizing');
+    socket.authorized = true;
+    console.log('Waiting for authorization from pool...');
     socket.stratumAuthorize(WALLET, PASS);
   }
 

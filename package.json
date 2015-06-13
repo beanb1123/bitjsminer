@@ -2,10 +2,11 @@
   "name": "bitcoin-miner",
   "version": "1.0.0",
   "description": "An embeddable bitcoin miner",
-  "main": "js/main.js",
+  "main": "./main.js",
   "dependencies": {
     "big-integer": "^1.4.6",
     "lodash": "^3.9.3",
+    "minimist": "^1.1.1",
     "stratum": "^0.2.4"
   },
   "devDependencies": {
@@ -30,5 +31,6 @@
   "bugs": {
     "url": "https://github.com/thorsteinson/bitcoin-miner/issues"
   },
-  "homepage": "https://github.com/thorsteinson/bitcoin-miner"
+  "homepage": "https://github.com/thorsteinson/bitcoin-miner",
+  "bin": "./main.js"
 }
