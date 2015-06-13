@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 var Client = require('stratum').Client;
 var _ = require('stratum').lodash;
 var bigInt = require('big-integer');
