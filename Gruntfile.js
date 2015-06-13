@@ -18,7 +18,8 @@ module.exports = function(grunt) {
         eqeqeq: true,
         eqnull: true,
         node: true,
-        funcscope: true
+        funcscope: true,
+        strict: true
       }
     },
 

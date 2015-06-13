@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+'use strict';
 
 var Client = require('stratum').Client;
 var _ = require('stratum').lodash;
@@ -89,7 +90,7 @@ client.on('mining.error', function(msg, socket){
 client.socket.on('data', function(stream) {
   // Need to split up string by lines
   var res = _.words(stream.toString(), /[^\n]+/g);
-  responses = _.map(res, JSON.parse);
+  var responses = _.map(res, JSON.parse);
   // Get the notification data if it exists
   responses.forEach(function(response) {
     if (response.method) {

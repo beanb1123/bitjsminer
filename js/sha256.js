@@ -1,3 +1,6 @@
+'use strict';
+/* jshint newcap: false */
+
 /**
  *
  *  Secure Hash Algorithm (SHA256)
@@ -47,7 +50,7 @@ function sha256_chunk(state, data)
 	/////////////////////////////////////////////////////
 	// HELPER FUNCTIONS
 	/////////////////////////////////////////////////////
-	
+
 
 	//// Binary Helper Functions
 	// Binary Right Rotate
@@ -69,7 +72,7 @@ function sha256_chunk(state, data)
 	function Gamma0(x) { return (S(x, 7) ^ S(x, 18) ^ R(x, 3)); }
 	function Gamma1(x) { return (S(x, 17) ^ S(x, 19) ^ R(x, 10)); }
 
-		
+
 	/////////////////////////////////////////////////////
 	// THIS IS WHERE THE FUN STARTS
 	// for anyone wanting to learn the SHA-256 Algorithm

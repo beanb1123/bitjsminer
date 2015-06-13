@@ -1,3 +1,4 @@
+'use strict';
 
 // For fun, and useful reference, this code often uses
 // strange verbage. Here is a reference:
@@ -8,14 +9,15 @@
 // This is in reference to the classic story of Willy Wonka and the Chocolate Factory.
 var SHA = require('./sha256.js');
 var _ = require('lodash');
+
+var DEFAULT_LOG_INTERVAL = 10000;
 // A miner is given a job and a client, and when it finishes mining the job will
 // auotmatically submit on behalf of the client.
 exports.Miner = function(client, job, log, logInterval) {
   this.client = client;
   this.job = job;
-  this.nonce;
-  this.logInterval = logInterval ? logInterval : 10000;
-  this.mining = false; // Whether or not we should continue to mine
+  this.logInterval = logInterval ? logInterval : DEFAULT_LOG_INTERVAL;
+  var logCounter = this.logInterval;
 
   var that = this;
 
@@ -44,10 +46,10 @@ exports.Miner = function(client, job, log, logInterval) {
       // slow down performance since the console can't keep up with the number
       // of hahses
       if (log) {
-        that.logInterval--;
-        if (that.logInterval <= 0) {
+        logCounter--;
+        if (logCounter <= 0) {
           console.log('Current nonce: ' + that.nonce.toString(16));
-          that.logInterval = logInterval; // Resets to default value
+          logCounter = that.logInterval; // Resets to default value
         }
       }
 
@@ -100,7 +102,7 @@ exports.Miner = function(client, job, log, logInterval) {
       console.log('Share completed, submitting');
     }
 
-    client.submit('miner', id, job.extranonce2, job.nTime, nonce);
+    client.submit(client.id, job.id, job.extranonce2, job.nTime, nonce);
 
     return;
   }, 3000);
