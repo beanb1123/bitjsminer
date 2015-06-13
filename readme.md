@@ -23,7 +23,7 @@ To install dependencies, simply execute `npm install` from the cloned repository
 Does It Really Mine Bitcoins?
 -----------------------------
 
-Yes, but it's so inneficient that you may not actually be able to mine anything depending on how the pool distributes shares. In order for it to be effective you may have to conistently run it to make sure you're constantly getting shares, so pick an appropriate mining pool if you want to even attempt to actually make some bitcoins.
+Yes, but it's so _inneficient_ that you may not actually be able to mine anything depending on how the pool distributes shares. In order for it to be effective you may have to conistently run it to make sure you're constantly getting shares, so pick an appropriate mining pool if you want to even attempt to actually make some bitcoins.
 
 However, even the pools now give share difficulties that are so high that it takes an enormous amount of time for a CPU to complete and submit a single share. All of those bitcoin mining facilities in the artic tundra have made it quite difficult to do anything without a super optimized device.
 
