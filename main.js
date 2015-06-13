@@ -6,6 +6,27 @@ var argv = require('minimist')(process.argv.slice(2)); // Processing for command
 var SHA = require('./js/sha256.js');
 var miner = require('./js/miner.js');
 
+// Help if needed
+if (argv.help || argv.h) {
+  console.log('Bitcoin Miner v1.0.0');
+  console.log('--------------------');
+  console.log();
+  console.log('The world\'s most inneficient bitcoin miner!');
+  console.log('Options:');
+  console.log('-h, --help: Prints this help message');
+  console.log('--wallet: sets the wallet that the pool will deposit any possible shares to');
+  console.log('\tdefaults to my own wallet ;)')
+  console.log('--port: sets the port that the program will listen on');
+  console.log('\tdefaults to 3334')
+  console.log('--domain: sets the domain of the pool you wish to connect to');
+  console.log('\tdefaults to the bitsolo pool: stratum.bitsolo.net')
+  console.log('--log: Enables logging. During the mining process the console will periodically report the current nonce. This will somewhat decrease performace (not that you actually care about that though).');
+  console.log('\tdisabled by default');
+  console.log('--interval: this controls how often we will report the current nonce. Basically it will spit out a message after n hashes. Has no impact if logging is disabled');
+  console.log('\tdefaults to 10,000');
+  process.exit(0);
+}
+
 // wallet and mining options
 var WALLET;
 var POOL_DOMAIN;
