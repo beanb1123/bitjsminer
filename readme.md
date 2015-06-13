@@ -16,9 +16,17 @@ Originally it was going to work with the browser using browserify, but that quic
 
 How do I use it?
 ----------------
-Just install the dependencies and execute the main file with node.
+Just install with npm!
+```
+npm install -g thorsteinson/bitcoin-miner
+```
 
-To install dependencies, simply execute `npm install` from the cloned repository directory.
+Now the program should be installed as `bitcoin-miner`. To test, try this:
+```
+bitcoin-miner --help
+```
+
+This should give some information about how to use the program, and the various options that you can pass into it. If you don't get anything back, it may not have installed, or npm programs may not automatically be added to your executable path.
 
 Does It Really Mine Bitcoins?
 -----------------------------
