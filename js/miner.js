@@ -74,7 +74,7 @@ exports.Miner = function(client, job, log, logInterval) {
 
       // Increment nonce
       that.nonce = SHA.safe_add(that.nonce, 1);
-      await new Promise(r => setTimeout(r, 1));
+      await new Promise(r => setTimeout(r, 10));
     }
 
     return false;
