@@ -36,11 +36,12 @@ exports.Miner = function(client, job, log, logInterval) {
   //
   // Returns a Golden Ticket (32-bit number) or false
   async function scanhash(midstate, data, hash1, target) {
-    await new Promise(r => setTimeout(r, 1000));
+    
     // Nonce is a number which starts at 0 and increments until 0xFFFFFFFF
     that.nonce = 0;
 
     while(true) {
+      await new Promise(r => setTimeout(r, 1000));
       // The nonce goes into the 4th 32-bit word
       data[4] = that.nonce;
       // If logging is enabled, output the current nonce. This will dramatically
