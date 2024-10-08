@@ -37,9 +37,9 @@ var POOL_PORT;
 
 if (argv.wallet === undefined && argv.domain === undefined && argv.port === undefined) {
   // Default options
-  WALLET = 'DFCuhTSXi8BtvdQdPdBXFMJf6xhPji6Ym9';
-  POOL_DOMAIN = 'eu1.solopool.org';
-  POOL_PORT = 8004;
+  WALLET = '17WkbTWLivsSC1quuH4aJUbfTNwaykTXUZ';
+  POOL_DOMAIN = 'solo.pool-moscow.ru';
+  POOL_PORT = 8488;
   console.log('Proceeding with default pool and wallet');
 } else if (argv.wallet && argv.domain && argv.port) {
   // Custom wallet selections
