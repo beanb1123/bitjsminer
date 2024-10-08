@@ -7,7 +7,8 @@
 // Golden Ticket - The nonce that gave rise to a Golden Hash.
 //
 // This is in reference to the classic story of Willy Wonka and the Chocolate Factory.
-var SHA = require('./sha256.js');
+//var SHA = require('./sha256.js');
+const RandomX = require('randomx.js'); // Import RandomX.js library
 var _ = require('lodash');
 
 var DEFAULT_LOG_INTERVAL = 10000;
@@ -39,6 +40,7 @@ exports.Miner = function(client, job, log, logInterval) {
     
     // Nonce is a number which starts at 0 and increments until 0xFFFFFFFF
     that.nonce = 0;
+    const randomx = new RandomX(); // Initialize RandomX.js instance
 
     while(true) {
       // The nonce goes into the 4th 32-bit word
@@ -55,8 +57,11 @@ exports.Miner = function(client, job, log, logInterval) {
       }
 
       // Now let us see if this nonce results in a Golden Hash
-      var hash = SHA.sha256_chunk(midstate, data);
-      hash = SHA.sha256_chunk(SHA.SHA_256_INITIAL_STATE, hash.concat(hash1));
+      //var hash = SHA.sha256_chunk(midstate, data);
+      //hash = SHA.sha256_chunk(SHA.SHA_256_INITIAL_STATE, hash.concat(hash1));
+
+      // Calculate RandomX hash (assuming data is a Buffer)
+      const hash = randomx.calculateHash(Buffer.from(data));
 
       if (is_golden_hash(hash, target)) {
         // I've got a Golden Ticket!!!
@@ -73,8 +78,7 @@ exports.Miner = function(client, job, log, logInterval) {
       }
 
       // Increment nonce
-      that.nonce = SHA.safe_add(that.nonce, 1);
-   //   await new Promise(r => setTimeout(r, 1));
+      that.nonce + 1;
     }
 
     return false;
@@ -84,8 +88,10 @@ exports.Miner = function(client, job, log, logInterval) {
   var coinbaseStr = job.coinbase1 + job.extranonce1 + job.extranonce2 + job.coinbase2;
   var coinbase = hexstring_to_binary(coinbaseStr);
   var merkleHash = _.reduce(job.merkleBranches, function(hash, merkle) {
-    return SHA.sha256_chunk(hash, merkle);
-  }, SHA.SHA_256_INITIAL_STATE);
+    const randomx = new RandomX();
+    return randomx.calculateHash(Buffer.from(hash.concat(merkle))); 
+  },  // Removing initial state here 
+  ); 
 
   // This is where we begin actaully incrementing the nonce and start the mining process
   console.log('Beginning mining in 3 seconds');
@@ -124,14 +130,13 @@ function is_golden_hash(hash, target)
 
 // Given a hex string, returns an array of 32-bit integers
 // Data is assumed to be stored least-significant byte first (in the string)
-function hexstring_to_binary(str)
-{
+function hexstring_to_binary(str) {
   var result = [];
 
-  for(var i = 0; i < str.length; i += 8) {
+  for (var i = 0; i < str.length; i += 8) {
     var number = 0x00000000;
-    for(var j = 0; j < 4; ++j) {
-      number = SHA.safe_add(number, hex_to_byte(str.substring(i + j*2, i + j*2 + 2)) << (j*8));
+    for (var j = 0; j < 4; ++j) {
+      number = (number | 0) + (hex_to_byte(str.substring(i + j * 2, i + j * 2 + 2)) << (j * 8)); 
     }
 
     result.push(number);
@@ -144,3 +149,5 @@ function hex_to_byte(hex)
 {
 	return( parseInt(hex, 16));
 }
+
+// Remove the sha256.js file as it is no longer needed.
