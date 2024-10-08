@@ -1,6 +1,6 @@
 'use strict';
 
-var randomx = require('randomx');
+var randomx = require('randomx-node');
 var _ = require('lodash');
 
 var DEFAULT_LOG_INTERVAL = 10000;
@@ -14,7 +14,7 @@ exports.Miner = function(client, job, log, logInterval) {
   var that = this;
 
   // Initialize RandomX
-  const randomxInstance = randomx.createRandomX();
+  const randomxInstance = randomx.create();
 
   async function scanhash(data) {
     that.nonce = 0;
@@ -33,7 +33,12 @@ exports.Miner = function(client, job, log, logInterval) {
       }
 
       // Calculate the hash using RandomX
-      const hash = randomx.hash(randomxInstance, Buffer.from(data));
+      const hash = randomx.hash(randomxInstance, Buffer.concat([
+        Buffer.from(data.previousHeader),
+        Buffer.from(data.coinbase),
+        Buffer.from(data.merkleHash),
+        Buffer.from([that.nonce])
+      ]));
 
       if (is_golden_hash(hash, client.target)) {
         console.log('Found the nonce for this block!');
@@ -88,9 +93,7 @@ exports.Miner = function(client, job, log, logInterval) {
 
 // Tests if a given hash is less than or equal to the given target.
 function is_golden_hash(hash, target) {
-  // Modify this according to RandomX hashing output
-  // Example check: compare the first few bytes of the hash with the target
-  return hash.compare(Buffer.from(target)) <= 0;
+  return hash.compare(Buffer.from(target, 'hex')) <= 0;
 }
 
 // Given a hex string, returns a Buffer
