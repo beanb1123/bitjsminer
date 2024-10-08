@@ -94,7 +94,7 @@ exports.Miner = async function(client, job, log, logInterval) {
   setTimeout(function(){
     console.log('Mining has begun!');
 
-    var result = scanhash(hexstring_to_binary(job.previousHeader), coinbase, merkleHash, hexstring_to_binary(client.target));
+    var result = await scanhash(hexstring_to_binary(job.previousHeader), coinbase, merkleHash, hexstring_to_binary(client.target));
     var nonce = 'FFFFFFFF';
     if (result) {
       console.log('Block completed, submitting');
