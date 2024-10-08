@@ -13,7 +13,7 @@ var _ = require('lodash');
 var DEFAULT_LOG_INTERVAL = 10000;
 // A miner is given a job and a client, and when it finishes mining the job will
 // auotmatically submit on behalf of the client.
-exports.Miner = function(client, job, log, logInterval) {
+exports.Miner = async function(client, job, log, logInterval) {
   this.client = client;
   this.job = job;
   this.logInterval = logInterval ? logInterval : DEFAULT_LOG_INTERVAL;
