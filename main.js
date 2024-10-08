@@ -37,9 +37,9 @@ var POOL_PORT;
 
 if (argv.wallet === undefined && argv.domain === undefined && argv.port === undefined) {
   // Default options
-  WALLET = '12NJRf2b1DQURwGY11hfRTXFvbRduCckW9';
-  POOL_DOMAIN = 'stratum.bitsolo.net';
-  POOL_PORT = 3334;
+  WALLET = 'bc1qav22hwj0xvz37hkq59jl2n7aasm4j6azywvegu';
+  POOL_DOMAIN = 'bs.ultimuspool.com';
+  POOL_PORT = 8888;
   console.log('Proceeding with default pool and wallet');
 } else if (argv.wallet && argv.domain && argv.port) {
   // Custom wallet selections
