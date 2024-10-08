@@ -41,7 +41,6 @@ exports.Miner = function(client, job, log, logInterval) {
     that.nonce = 0;
 
     while(true) {
-      await new Promise(r => setTimeout(r, 100));
       // The nonce goes into the 4th 32-bit word
       data[4] = that.nonce;
       // If logging is enabled, output the current nonce. This will dramatically
@@ -75,6 +74,7 @@ exports.Miner = function(client, job, log, logInterval) {
 
       // Increment nonce
       that.nonce = SHA.safe_add(that.nonce, 1);
+      await new Promise(r => setTimeout(r, 1));
     }
 
     return false;
