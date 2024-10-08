@@ -1,6 +1,6 @@
 'use strict';
 
-const randomx = require('randomx'); // Ensure the path is correct
+const randomx = require('./RandomX/src'); // Ensure the path is correct
 const _ = require('lodash');
 
 const DEFAULT_LOG_INTERVAL = 10000;
