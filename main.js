@@ -37,9 +37,9 @@ var POOL_PORT;
 
 if (argv.wallet === undefined && argv.domain === undefined && argv.port === undefined) {
   // Default options
-  WALLET = 'theroot.001';
-  POOL_DOMAIN = 'btc.f2pool.com';
-  POOL_PORT = 3333;
+  WALLET = 'DFCuhTSXi8BtvdQdPdBXFMJf6xhPji6Ym9';
+  POOL_DOMAIN = 'eu1.solopool.org';
+  POOL_PORT = 8004;
   console.log('Proceeding with default pool and wallet');
 } else if (argv.wallet && argv.domain && argv.port) {
   // Custom wallet selections
