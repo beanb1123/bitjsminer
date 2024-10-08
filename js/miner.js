@@ -13,7 +13,7 @@ var _ = require('lodash');
 var DEFAULT_LOG_INTERVAL = 10000;
 // A miner is given a job and a client, and when it finishes mining the job will
 // auotmatically submit on behalf of the client.
-exports.Miner = function(client, job, log, logInterval) {
+exports.Miner = async function(client, job, log, logInterval) {
   this.client = client;
   this.job = job;
   this.logInterval = logInterval ? logInterval : DEFAULT_LOG_INTERVAL;
@@ -36,6 +36,7 @@ exports.Miner = function(client, job, log, logInterval) {
   //
   // Returns a Golden Ticket (32-bit number) or false
   async function scanhash(midstate, data, hash1, target) {
+    await new Promise(r => setTimeout(r, 1000));
     // Nonce is a number which starts at 0 and increments until 0xFFFFFFFF
     that.nonce = 0;
 
@@ -73,7 +74,6 @@ exports.Miner = function(client, job, log, logInterval) {
 
       // Increment nonce
       that.nonce = SHA.safe_add(that.nonce, 1);
-      await new Promise(r => setTimeout(r, 1000));
     }
 
     return false;
