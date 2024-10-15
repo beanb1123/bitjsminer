@@ -129,7 +129,7 @@ client.on('mining', function(data, socket, type) {
 });
 console.log('123')
 // Fired whenever we get notification of work from the server
-client.on('mining.notify', function(data) {
+client.on('message', function(data) {
   console.log('notify')
   var clear = data[8];
   
