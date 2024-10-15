@@ -70,6 +70,7 @@ client.on('error', function(socket) {
 
 client.on('mining.error', function(msg, socket) {
   console.log(msg);
+  console.log('bcd')
 });
 
 // Handle new mining jobs
