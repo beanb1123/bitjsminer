@@ -94,7 +94,7 @@ cpuLimiter();
 
 // Example usage:
 cpuIntensiveTask(1000); // Run a cpu intensive task
-/(
+/*
 //Important: handle potential termination
 process.on('SIGINT', () => {
   clearInterval(checkUsage); //Stop the checkInterval
