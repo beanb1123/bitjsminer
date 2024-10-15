@@ -57,7 +57,7 @@ client.connect({
   client.jobs = [];
 
   console.log('Successfully connected to the pool');
-  console.log();
+  console.log(socket);
   return socket.stratumSubscribe('Node.js Stratum');
   })
   .then(() => {
