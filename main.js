@@ -73,7 +73,7 @@ client.on('mining.error', function(msg, socket) {
   console.log(msg);
   console.log('bcd')
 });
-
+console.log('gddh')
 // Handle new mining jobs
 client.socket.on('data', function(stream) {
   var res = _.words(stream.toString(), /[^\n]+/g);
