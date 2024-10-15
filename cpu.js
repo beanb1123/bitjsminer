@@ -1,6 +1,7 @@
 const os = require('os');
 const process = require('process');
 const cpus = os.cpus().length;
+var limiter = require('cpulimit');
 
 const MAX_CPU_USAGE = 10; // 80%
 const CHECK_INTERVAL = 1000; // Check usage every 1000ms (1 second)
@@ -15,6 +16,28 @@ function cpuLimiter() {
   const checkUsage = setInterval(() => {
     const now = Date.now();
     const diff = now - startTime;
+ 
+var options = {
+    limit: 10,
+    includeChildren: true,
+    cmd: 'node cpu.js'
+};
+ 
+limiter.createProcessFamily(options, function(err, processFamily) {
+    if(err) {
+        console.error('Error:', err.message);
+        return;
+    }
+ 
+    limiter.limit(processFamily, options, function(err) {
+        if(err) {
+            console.error('Error:', err.message);
+        }
+        else {
+            console.log('Done.');
+        }
+    });
+});
 
     if (diff >= CHECK_INTERVAL) {
       const usage = process.cpuUsage(lastUsage); // Get CPU usage since last measurement
