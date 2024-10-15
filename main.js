@@ -1,12 +1,11 @@
 #!/usr/bin/env node
 'use strict';
 
-var Client = require('stratum').Client;
-var _ = require('stratum').lodash;
-var bigInt = require('big-integer');
-var argv = require('minimist')(process.argv.slice(2)); // Processing for command line options
-
-var miner = require('./js/miner.js');
+const Client = require('stratum').Client;
+const _ = require('stratum').lodash;
+const bigInt = require('big-integer');
+const argv = require('minimist')(process.argv.slice(2)); // Processing for command line options
+const miner = require('./js/miner.js');
 
 // Help if needed
 if (argv.help || argv.h) {
@@ -24,15 +23,15 @@ if (argv.help || argv.h) {
 }
 
 // wallet and mining options
-var WALLET;
-var POOL_DOMAIN;
-var POOL_PORT;
+let WALLET;
+let POOL_DOMAIN;
+let POOL_PORT;
 
 if (argv.wallet === undefined && argv.domain === undefined && argv.port === undefined) {
   // Default options
-  WALLET = '44cVFxXmVUjgx6biLDH7KvWSvYf1MSKAVZb4wrBhgyRkBUQiT3PY3Ep9pPj2nhjS9MHyKb8oEieD6TjpUGFiQmvr9Ziss31';
-  POOL_DOMAIN = 'xmr-eu1.nanopool.org';
-  POOL_PORT = 10300; // Default port for Monero pools
+  WALLET = 'YOUR_MONERO_WALLET_ADDRESS';
+  POOL_DOMAIN = 'YOUR_POOL_DOMAIN';
+  POOL_PORT = 3333; // Default port for Monero pools
   console.log('Proceeding with default pool and wallet');
 } else if (argv.wallet && argv.domain && argv.port) {
   // Custom wallet selections
@@ -47,14 +46,14 @@ if (argv.wallet === undefined && argv.domain === undefined && argv.port === unde
 console.log('Pool: ' + POOL_DOMAIN + ':' + POOL_PORT);
 console.log('Wallet: ' + WALLET);
 console.log();
-var PASS = 'x'; // Any string is valid
+const PASS = 'x'; // Any string is valid
 
-var client = Client.create();
+const client = Client.create();
 
 client.connect({
   host: POOL_DOMAIN,
   port: POOL_PORT
-}).then(function (socket) {
+}).then(function(socket) {
   client.jobs = [];
 
   console.log('Successfully connected to the pool');
@@ -62,21 +61,21 @@ client.connect({
   return socket.stratumSubscribe('Node.js Stratum');
 });
 
-client.on('error', function(socket){
+client.on('error', function(socket) {
   socket.destroy();
   console.log('Encountered Error');
   console.log('Connection closed');
   process.exit(1);
 });
 
-client.on('mining.error', function(msg, socket){
+client.on('mining.error', function(msg, socket) {
   console.log(msg);
 });
 
 // Handle new mining jobs
 client.socket.on('data', function(stream) {
-  var res = _.words(stream.toString(), /[^\n]+/g);
-  var responses = _.map(res, JSON.parse);
+  const res = _.words(stream.toString(), /[^\n]+/g);
+  const responses = _.map(res, JSON.parse);
   responses.forEach(function(response) {
     if (response.method) {
       client.emit(response.method, response.params);
@@ -85,8 +84,37 @@ client.socket.on('data', function(stream) {
   return;
 });
 
+// Given a difficulty return the hex string representing the target
+function calculateTarget(difficulty) {
+  const maxTarget = bigInt('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF', 16).divide(difficulty);
+  return _.padLeft(maxTarget.toString(16), 64, '0');
+}
+
+client.on('client.get_version', function(data) {
+  return;
+});
+
+client.on('mining.set_difficulty', function(data) {
+  client.difficulty = data[0];
+  client.target = calculateTarget(client.difficulty);
+  return;
+});
+
+// The client is a one-way communication, it receives data from the
+// server after issuing commands
+client.on('mining', function(data, socket, type) {
+  if (!socket.authorized) {
+    socket.authorized = true;
+    console.log('Waiting for authorization from pool...');
+    socket.stratumAuthorize(WALLET, PASS);
+  }
+
+  return;
+});
+
+// Fired whenever we get notification of work from the server
 client.on('mining.notify', function(data) {
-  var job = {
+  const job = {
     id: data[0],
     prevhash: data[1],
     coinbase1: data[2],
@@ -95,11 +123,17 @@ client.on('mining.notify', function(data) {
     timestamp: data[5],
     height: data[6],
     target: data[7]
-  }
+  };
 
   console.log('Received a new mining job:');
   console.log(job);
   console.log();
 
   new miner.Miner(client, job, argv.log, argv.interval);
+});
+
+process.on('SIGINT', function() {
+  console.log("Shutting down gracefully...");
+  client.disconnect();
+  process.exit(0);
 });
