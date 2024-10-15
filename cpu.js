@@ -17,7 +17,7 @@ function cpuLimiter() {
     const now = Date.now();
     const diff = now - startTime;
       console.log(process.pid)
-/* 
+
 var options = {
     limit: 10,
     includeChildren: true,
@@ -39,7 +39,7 @@ limiter.createProcessFamily(options, function(err, processFamily) {
         }
     });
 });
-*/
+
     if (diff >= CHECK_INTERVAL) {
       const usage = process.cpuUsage(lastUsage); // Get CPU usage since last measurement
       lastUsage = usage; // Update lastUsage for the next measurement
