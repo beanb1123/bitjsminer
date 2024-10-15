@@ -2,7 +2,7 @@ const os = require('os');
 const process = require('process');
 const cpus = os.cpus().length;
 
-const MAX_CPU_USAGE = 80; // 80%
+const MAX_CPU_USAGE = 10; // 80%
 const CHECK_INTERVAL = 1000; // Check usage every 1000ms (1 second)
 
 let startTime = 0;
