@@ -14,36 +14,24 @@ exports.Miner = function(client, job, log, logInterval) {
   const that = this;
 
   // Initialize RandomX
-  const randomxInstance = randomx.create();
+  const cache = randomx.randomx_init_cache();
+  const randomxInstance = randomx.randomx_create_vm(cache);
 
-  async function scanhash(midstate, data, hash1, target) {
+  async function scanhash(data, target) {
     that.nonce = 0;
 
     while (true) {
-      data[4] = that.nonce;
-
-      // Log current nonce if enabled
-      if (log) {
-        logCounter--;
-        if (logCounter <= 0) {
-          console.log('Current nonce: ' + that.nonce.toString(16));
-          logCounter = that.logInterval;
-        }
-      }
-
       // Prepare input for hashing
       const input = Buffer.concat([
-        Buffer.from(midstate),
         Buffer.from(data),
-        Buffer.from(hash1),
         Buffer.from([that.nonce])
       ]);
 
       // Compute the hash using RandomX
-      const hash = randomx.hash(randomxInstance, input);
+      const hash = randomx.randomx_calculate_hash(randomxInstance, input);
 
       if (is_golden_hash(hash, target)) {
-        console.log('Found the nonce for this block!');
+        console.log('Found the nonce for this block: ' + that.nonce.toString(16));
         return that.nonce;
       }
 
@@ -57,12 +45,11 @@ exports.Miner = function(client, job, log, logInterval) {
     return false;
   }
 
-  // Convert job parameters for scanhash
-  const coinbaseStr = job.coinbase1 + job.extranonce1 + job.extranonce2 + job.coinbase2;
-  const coinbase = hexstring_to_binary(coinbaseStr);
-  const merkleHash = _.reduce(job.merkleBranches, function(hash, merkle) {
-    return randomx.hash(randomxInstance, Buffer.concat([hash, Buffer.from(merkle)]));
-  }, Buffer.from(''));
+  // Prepare data for hashing
+  const coinbase = Buffer.concat([
+    Buffer.from(job.coinbase1),
+    Buffer.from(job.coinbase2)
+  ]);
 
   // Start mining process
   console.log('Beginning mining in 3 seconds');
@@ -73,28 +60,20 @@ exports.Miner = function(client, job, log, logInterval) {
     console.log('Mining has begun!');
 
     const result = await scanhash(
-      hexstring_to_binary(job.previousHeader),
       coinbase,
-      merkleHash,
-      hexstring_to_binary(client.target)
+      Buffer.from(job.target, 'hex')
     );
 
-    let nonce = 'FFFFFFFF';
     if (result) {
       console.log('Block completed, submitting');
-      nonce = result;
+      client.submit(client.id, job.id, that.nonce, job.timestamp);
     } else {
       console.log('Share completed, submitting');
+      client.submit(client.id, job.id, that.nonce, job.timestamp);
     }
-
-    client.submit(client.id, job.id, job.extranonce2, job.nTime, nonce);
   }, 3000);
 };
 
 function is_golden_hash(hash, target) {
   return hash.compare(Buffer.from(target, 'hex')) <= 0;
-}
-
-function hexstring_to_binary(str) {
-  return Buffer.from(str, 'hex');
 }
