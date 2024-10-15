@@ -77,6 +77,7 @@ client.on('error', function(msg, socket) {
 });
 console.log('bcd')
 client.on('mining.error', function(msg, socket) {
+  console.log(socket)
   console.log(msg);
   console.log('bcd')
 });
@@ -97,7 +98,9 @@ client.socket.on('data', function(stream) {
 
 // Given a difficulty return the hex string representing the target
 function calculateTarget(difficulty) {
+  console.log('tar')
   var maxTarget = bigInt('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF', 16).divide(difficulty);
+  console.log('tar2')
   return _.padLeft(maxTarget.toString(16), 64, '0');
 }
 console.log('aaaaa')
