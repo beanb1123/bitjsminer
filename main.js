@@ -83,6 +83,7 @@ client.socket.on('data', function(stream) {
       client.emit(response.method, response.params);
     }
   });
+  console.log('zzz')
   return;
 });
 } catch (e) { console.log(e); }
