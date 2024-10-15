@@ -61,7 +61,8 @@ client.connect({
   return socket.stratumSubscribe('Node.js Stratum');
 });
 
-client.on('error', function(socket) {
+client.on('error', function(msg, socket) {
+  console.log(msg);
   socket.destroy();
   console.log('Encountered Error');
   console.log('Connection closed');
