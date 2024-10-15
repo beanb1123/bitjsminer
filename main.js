@@ -53,7 +53,7 @@ try {
 client.connect({
   host: POOL_DOMAIN,
   port: POOL_PORT
-}).then(function(msg, socket) {
+}).then(function(socket) {
   client.jobs = [];
 
   console.log('Successfully connected to the pool');
@@ -83,7 +83,7 @@ client.socket.on('data', function(stream) {
   });
   return;
 });
-} catch (e) { console.log(e); }
+  
 // Given a difficulty return the hex string representing the target
 function calculateTarget(difficulty) {
   var maxTarget = bigInt('0000FFFF00000000000000000000000000000000000000000000000000000000', 16).divide(difficulty);
