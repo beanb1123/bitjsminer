@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 'use strict';
 
-var Client = require('stratum').Client;
-var _ = require('stratum').lodash;
-var bigInt = require('big-integer');
-var argv = require('minimist')(process.argv.slice(2)); // Processing for command line options
-var miner = require('./js/miner.js');
+const Client = require('stratum').Client;
+const _ = require('stratum').lodash;
+const bigInt = require('big-integer');
+const argv = require('minimist')(process.argv.slice(2)); // Processing for command line options
+const miner = require('./js/miner.js');
 
 // Help if needed
 if (argv.help || argv.h) {
@@ -46,9 +46,9 @@ if (argv.wallet === undefined && argv.domain === undefined && argv.port === unde
 console.log('Pool: ' + POOL_DOMAIN + ':' + POOL_PORT);
 console.log('Wallet: ' + WALLET);
 console.log();
-var PASS = 'x'; // Any string is valid
+const PASS = 'x'; // Any string is valid
 
-var client = Client.create();
+const client = Client.create();
 try {
 client.connect({
   host: POOL_DOMAIN,
@@ -57,7 +57,7 @@ client.connect({
   client.jobs = [];
 
   console.log('Successfully connected to the pool');
-  console.log(msg);
+  console.log();
   return socket.stratumSubscribe('Node.js Stratum');
 });
 
@@ -74,8 +74,8 @@ client.on('mining.error', function(msg, socket) {
 
 // Handle new mining jobs
 client.socket.on('data', function(stream) {
-  var res = _.words(stream.toString(), /[^\n]+/g);
-  var responses = _.map(res, JSON.parse);
+  const res = _.words(stream.toString(), /[^\n]+/g);
+  const responses = _.map(res, JSON.parse);
   responses.forEach(function(response) {
     if (response.method) {
       client.emit(response.method, response.params);
@@ -83,7 +83,7 @@ client.socket.on('data', function(stream) {
   });
   return;
 });
-  
+} catch (e) { console.log(e); }
 // Given a difficulty return the hex string representing the target
 function calculateTarget(difficulty) {
   var maxTarget = bigInt('0000FFFF00000000000000000000000000000000000000000000000000000000', 16).divide(difficulty);
@@ -114,7 +114,7 @@ client.on('mining', function(data, socket, type) {
 
 // Fired whenever we get notification of work from the server
 client.on('mining.notify', function(data) {
-  var job = {
+  const job = {
     id: data[0],
     prevhash: data[1],
     coinbase1: data[2],
