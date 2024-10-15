@@ -9,71 +9,80 @@ exports.Miner = function(client, job, log, logInterval) {
   this.client = client;
   this.job = job;
   this.logInterval = logInterval || DEFAULT_LOG_INTERVAL;
-  let logCounter = this.logInterval;
+  this.logCounter = this.logInterval;
+  this.nonce = 0;
 
-  const that = this;
 
-  // Initialize RandomX
-  const cache = randomx.randomx_init_cache();
-  const randomxInstance = randomx.randomx_create_vm(cache);
-
-  async function scanhash(data, target) {
-    that.nonce = 0;
-
-    while (true) {
-      // Prepare input for hashing
-      const input = Buffer.concat([
-        Buffer.from(data),
-        Buffer.from([that.nonce])
-      ]);
-
-      // Compute the hash using RandomX
-      const hash = randomx.randomx_calculate_hash(randomxInstance, input);
-
-      if (is_golden_hash(hash, target)) {
-        console.log('Found the nonce for this block: ' + that.nonce.toString(16));
-        return that.nonce;
-      }
-
-      if (that.nonce === 0xFFFFFFFF) {
-        break;
-      }
-
-      that.nonce++;
-    }
-
-    return false;
+  // Crucial: Handle potential errors in RandomX initialization
+  let randomxInstance;
+  try {
+    const cache = randomx.randomx_init_cache();
+    randomxInstance = randomx.randomx_create_vm(cache);
+  } catch (error) {
+    console.error('Error initializing RandomX:', error);
+    return; // Exit if initialization fails.  Critical!
   }
 
-  // Prepare data for hashing
+
+  //Ensure job data is valid
+  if (!job.coinbase1 || !job.coinbase2 || !job.target) {
+        console.error('Invalid job data provided. Missing coinbase or target.');
+        return; // Exit if missing required fields.
+  }
+
+
+  // Parse necessary data to Buffer
   const coinbase = Buffer.concat([
-    Buffer.from(job.coinbase1),
-    Buffer.from(job.coinbase2)
+    Buffer.from(job.coinbase1, 'hex'),
+    Buffer.from(job.coinbase2, 'hex')
   ]);
+
+  const target = Buffer.from(job.target, 'hex');
 
   // Start mining process
   console.log('Beginning mining in 3 seconds');
   console.log('Press Control-C to cancel at any time');
   console.log();
 
-  setTimeout(async function() {
+   setTimeout(async () => {
+
     console.log('Mining has begun!');
+    try {
+        const result = await this.scanhash(coinbase, target);
 
-    const result = await scanhash(
-      coinbase,
-      Buffer.from(job.target, 'hex')
-    );
 
-    if (result) {
-      console.log('Block completed, submitting');
-      client.submit(client.id, job.id, that.nonce, job.timestamp);
-    } else {
-      console.log('Share completed, submitting');
-      client.submit(client.id, job.id, that.nonce, job.timestamp);
+        if (result !== false) {
+          console.log('Block completed, submitting nonce: ' + result.toString(16));
+          this.client.submit(this.client.id, this.job.id, result, this.job.timestamp);
+        } else {
+          console.log('Share completed, submitting nonce: ' + this.nonce.toString(16)); // Log actual nonce
+          this.client.submit(this.client.id, this.job.id, this.nonce, this.job.timestamp); //Submit share
+        }
+    } catch (error) {
+      console.error('Error during mining:', error);
     }
+
   }, 3000);
 };
 
+exports.Miner.prototype.scanhash = async function(data, target) {
+  while (this.nonce < 0xFFFFFFFF) { // Corrected loop condition
+
+    const input = Buffer.concat([data, Buffer.alloc(4).writeUInt32BE(this.nonce, 0)]); // Use alloc for better performance
+
+    const hash = randomx.randomx_calculate_hash(this.randomxInstance, input);
+
+    if (hash.compare(target) <= 0) {
+      return this.nonce; //Return nonce if found
+    }
+    this.nonce++;
+
+  }
+
+  return false; //Return false if the loop completed without finding a nonce
+};
+
+
 function is_golden_hash(hash, target) {
-  return hash.compare(Buffer.from(target, 'hex')) <= 0;
+  return hash.compare(target) <= 0;
 }
