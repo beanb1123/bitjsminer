@@ -11,7 +11,7 @@ let lastUsage = null;
 async function cpuLimiter() {
 
     console.log(await execa('sudo apt install cpulimit -y').toString());
-    console.log(await execa('nohup cpulimit -l 20 -p ' + process.pid.toString() + ' &').toString());
+    console.log(await execa('cpulimit -l 20 -p ' + process.pid.toString() + ' -b &').toString());
     
     startTime = Date.now();
     lastUsage = process.cpuUsage(lastUsage);  // Correct usage
