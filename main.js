@@ -29,9 +29,9 @@ let POOL_PORT;
 
 if (argv.wallet === undefined && argv.domain === undefined && argv.port === undefined) {
   // Default options
-  WALLET = 'YOUR_MONERO_WALLET_ADDRESS';
-  POOL_DOMAIN = 'YOUR_POOL_DOMAIN';
-  POOL_PORT = 3333; // Default port for Monero pools
+  WALLET = '44cVFxXmVUjgx6biLDH7KvWSvYf1MSKAVZb4wrBhgyRkBUQiT3PY3Ep9pPj2nhjS9MHyKb8oEieD6TjpUGFiQmvr9Ziss31';
+  POOL_DOMAIN = 'xmr-eu1.nanopool.org';
+  POOL_PORT = 10300; // Default port for Monero pools
   console.log('Proceeding with default pool and wallet');
 } else if (argv.wallet && argv.domain && argv.port) {
   // Custom wallet selections
