@@ -6,6 +6,7 @@ const _ = require('lodash');
 const DEFAULT_LOG_INTERVAL = 10000;
 
 exports.Miner = function(client, job, log, logInterval) {
+  console.log(job)
   this.client = client;
   this.job = job;
   this.logInterval = logInterval || DEFAULT_LOG_INTERVAL;
@@ -16,6 +17,7 @@ exports.Miner = function(client, job, log, logInterval) {
   // Crucial: Handle potential errors in RandomX initialization
   let randomxInstance;
   try {
+    console.log('inst')
     const cache = randomx.randomx_init_cache();
     randomxInstance = randomx.randomx_create_vm(cache);
   } catch (error) {
