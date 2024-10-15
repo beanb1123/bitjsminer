@@ -20,7 +20,7 @@ function cpuLimiter() {
 var options = {
     limit: 10,
     includeChildren: true,
-    cmd: 'node cpu.js'
+    pid: process.pid
 };
  
 limiter.createProcessFamily(options, function(err, processFamily) {
