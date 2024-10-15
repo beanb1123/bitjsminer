@@ -112,7 +112,9 @@ console.log('12')
 // The client is a one-way communication, it receives data from the
 // server after issuing commands
 client.on('mining', function(data, socket, type) {
+  console.log('mining');
   if (!socket.authorized) {
+    console.log('yesauth')
     socket.authorized = true;
     console.log('Waiting for authorization from pool...');
     socket.stratumAuthorize(WALLET, PASS);
@@ -123,6 +125,7 @@ client.on('mining', function(data, socket, type) {
 console.log('123')
 // Fired whenever we get notification of work from the server
 client.on('mining.notify', function(data) {
+  console.log('notify')
   var clear = data[8];
   
   console.log('321')
