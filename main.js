@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 'use strict';
 
-var Client = require('stratum').Client;
-var _ = require('stratum').lodash;
-var bigInt = require('big-integer');
-var argv = require('minimist')(process.argv.slice(2)); // Processing for command line options
-var miner = require('./js/miner.js');
+const Client = require('stratum').Client;
+const _ = require('stratum').lodash;
+const bigInt = require('big-integer');
+const argv = require('minimist')(process.argv.slice(2));
+const miner = require('./js/miner.js');
 
 // Help if needed
 if (argv.help || argv.h) {
@@ -116,9 +116,9 @@ client.on('mining', function(data, socket, type) {
 });
 console.log('123')
 // Fired whenever we get notification of work from the server
-client.on('job', function(data) {
+client.on('mining.notify', function(data) {
   console.log('321')
-  var job = {
+  const job = {
     id: data[0],
     prevhash: data[1],
     coinbase1: data[2],
