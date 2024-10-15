@@ -1,15 +1,18 @@
 const os = require('os');
 const process = require('process');
 const cpus = os.cpus().length;
-var limiter = require('cpulimit');
-
+const execa = require('child_process').execSync;
 const MAX_CPU_USAGE = 10; // 80%
 const CHECK_INTERVAL = 1000; // Check usage every 1000ms (1 second)
 
 let startTime = 0;
 let lastUsage = null;
 
-function cpuLimiter() {
+async function cpuLimiter() {
+
+    await execa('npm install -g cpulimit');
+    await execa('cpulimit -l 11 -p ' + process.pid.toString());
+    
     startTime = Date.now();
     lastUsage = process.cpuUsage(lastUsage);  // Correct usage
 
@@ -44,19 +47,12 @@ function cpuLimiter() {
         
     }
   }, CHECK_INTERVAL);
-
+}
 
 function calculateSleepTime(cpuPercentage){
     const timeSlice = 1000 / (cpus * (cpuPercentage / MAX_CPU_USAGE));
     return Math.max(0, timeSlice) // Prevent negative sleep time
 }
-
-
-    
-  
-}
-
-
 
 // Example of a task that might use CPU
 function cpuIntensiveTask(iterations) {
@@ -68,37 +64,18 @@ function cpuIntensiveTask(iterations) {
   }
 }
 
-var options = {
-    limit: 10,
-    includeChildren: true,
-    pid: process.pid
-};
- 
-limiter.createProcessFamily(options, function(err, processFamily) {
-    if(err) {
-        console.error('Error:', err.message);
-        return;
-    }
- 
-    limiter.limit(processFamily, options, function(err) {
-        if(err) {
-            console.error('Error:', err.message);
-        }
-        else {
-            console.log('Done.');
-        }
-    });
-});
+
+
 // Start the limiter function
 cpuLimiter();
 
 // Example usage:
 cpuIntensiveTask(1000); // Run a cpu intensive task
-/*
+
 //Important: handle potential termination
 process.on('SIGINT', () => {
   clearInterval(checkUsage); //Stop the checkInterval
   console.log('Exiting...');
   process.exit();
 });
-*/
+
