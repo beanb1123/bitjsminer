@@ -86,7 +86,7 @@ client.socket.on('data', function(stream) {
 
 // Given a difficulty return the hex string representing the target
 function calculateTarget(difficulty) {
-  const maxTarget = bigInt('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF', 16).divide(difficulty);
+  var maxTarget = bigInt('0000FFFF00000000000000000000000000000000000000000000000000000000', 16).divide(difficulty);
   return _.padLeft(maxTarget.toString(16), 64, '0');
 }
 
@@ -128,12 +128,8 @@ client.on('mining.notify', function(data) {
   console.log('Received a new mining job:');
   console.log(job);
   console.log();
-
+  
   new miner.Miner(client, job, argv.log, argv.interval);
-});
 
-process.on('SIGINT', function() {
-  console.log("Shutting down gracefully...");
-  client.disconnect();
-  process.exit(0);
+  return;
 });
