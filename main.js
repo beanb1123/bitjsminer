@@ -83,6 +83,7 @@ client.on('mining.error', function(msg, socket) {
 console.log('gddh')
 // Handle new mining jobs
 client.socket.on('data', function(stream) {
+  console.log('data')
   var res = _.words(stream.toString(), /[^\n]+/g);
   var responses = _.words(data.toString(), /[^\n]+/g).map(JSON.parse);
   responses.forEach(response => {
@@ -90,6 +91,7 @@ client.socket.on('data', function(stream) {
         client.emit(response.method, response.params);
     }
   });
+  console.log('dataend')
   return;
 });
 
