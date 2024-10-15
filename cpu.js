@@ -2,53 +2,58 @@ const os = require('os');
 const process = require('process');
 const cpus = os.cpus().length;
 
-// Set the maximum CPU percentage allowed. Adjust this value as needed.
 const MAX_CPU_USAGE = 80; // 80%
-
-// Calculate the time slice based on the number of cores available.
-const timeSlice = 100 / (cpus * MAX_CPU_USAGE / 100);
+const CHECK_INTERVAL = 1000; // Check usage every 1000ms (1 second)
 
 let startTime = 0;
-let lastUsage = 0;
+let lastUsage = null;
 
 function cpuLimiter() {
-  const now = Date.now();
-  const diff = now - startTime;
+    startTime = Date.now();
+    lastUsage = process.cpuUsage(lastUsage);  // Correct usage
 
-  if (diff >= 1000) { // Check usage every second
-    const usage = process.cpuUsage(startTime);
-    const cpuPercentage = (usage.user + usage.system) / 1000 / diff * 100;
-    
-    if (cpuPercentage > MAX_CPU_USAGE) {
+  const checkUsage = setInterval(() => {
+    const now = Date.now();
+    const diff = now - startTime;
 
-        // Calculate time to sleep based on needed reduction.
-        const timeToSleep = Math.max(0, timeSlice - (Date.now() - startTime)); 
+    if (diff >= CHECK_INTERVAL) {
+      const usage = process.cpuUsage(lastUsage); // Get CPU usage since last measurement
+      lastUsage = usage; // Update lastUsage for the next measurement
 
-        console.log(`CPU usage exceeded limit (${cpuPercentage.toFixed(2)}%).  Sleeping for ${timeToSleep.toFixed(2)}ms`);
-        process.nextTick(() => {
-            setTimeout(() => {
-                startTime = Date.now();
-                lastUsage = process.cpuUsage();
-            }, timeToSleep)
-        });
-        return; // Exit the function if the limit is exceeded
+      const cpuPercentage =
+        ((usage.user + usage.system) / diff) * 1000 * 100 / 1000; // Avoid division by zero
+
+      if (cpuPercentage > MAX_CPU_USAGE) {
+          const timeToSleep = calculateSleepTime(cpuPercentage);
+
+        console.log(
+          `CPU usage exceeded limit (${cpuPercentage.toFixed(
+            2
+          )}%). Sleeping for ${timeToSleep.toFixed(2)}ms`
+        );
+        setTimeout(() => {
+            startTime = Date.now();
+            lastUsage = null; 
+        }, timeToSleep);
+        return;
+      }
+        startTime = now;
+        
     }
+  }, CHECK_INTERVAL);
 
-    startTime = now;
-  }
-    
-    
-   // Schedule the next check. Adjust this interval as needed.
-  setTimeout(cpuLimiter, 1000); // Check every second
+
+function calculateSleepTime(cpuPercentage){
+    const timeSlice = 1000 / (cpus * (cpuPercentage / MAX_CPU_USAGE));
+    return Math.max(0, timeSlice) // Prevent negative sleep time
 }
 
 
-// Initialize the first CPU usage measurement.
-startTime = Date.now();
-lastUsage = process.cpuUsage();
+    
+  
+}
 
-// Start the limiter function
-cpuLimiter();
+
 
 // Example of a task that might use CPU
 function cpuIntensiveTask(iterations) {
@@ -60,13 +65,16 @@ function cpuIntensiveTask(iterations) {
   }
 }
 
+
+// Start the limiter function
+cpuLimiter();
+
 // Example usage:
-cpuIntensiveTask(1000);  // Run a cpu intensive task
+cpuIntensiveTask(1000); // Run a cpu intensive task
 
-// Important:  This script will continue to monitor and adjust as needed. 
-// Add graceful shutdown logic if required for the application.
-
+//Important: handle potential termination
 process.on('SIGINT', () => {
-  console.log("Exiting...");
+  clearInterval(checkUsage); //Stop the checkInterval
+  console.log('Exiting...');
   process.exit();
 });
