@@ -60,7 +60,7 @@ client.connect({
   console.log();
   return socket.stratumSubscribe('Node.js Stratum');
 });
-
+console.log('abc')
 client.on('error', function(socket) {
   socket.destroy();
   console.log('Encountered Error');
