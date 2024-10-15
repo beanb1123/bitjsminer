@@ -53,11 +53,11 @@ try {
 client.connect({
   host: POOL_DOMAIN,
   port: POOL_PORT
-}).then(function(socket) {
+}).then(function(msg, socket) {
   client.jobs = [];
 
   console.log('Successfully connected to the pool');
-  console.log();
+  console.log(msg);
   return socket.stratumSubscribe('Node.js Stratum');
 });
 
