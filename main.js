@@ -68,8 +68,8 @@ client.connect({
     process.exit(1); // Exit on connection failure
   });
 
-client.on('error', function(socket) {
-  console.log('bcd')
+client.on('error', function(msg, socket) {
+  console.log(msg, socket)
   socket.destroy();
   console.log('Encountered Error');
   console.log('Connection closed');
