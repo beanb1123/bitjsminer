@@ -68,7 +68,7 @@ client.on('error', function(socket) {
   console.log('Connection closed');
   process.exit(1);
 });
-
+console.log('bcd')
 client.on('mining.error', function(msg, socket) {
   console.log(msg);
   console.log('bcd')
