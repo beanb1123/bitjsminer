@@ -18,28 +18,6 @@ function cpuLimiter() {
     const diff = now - startTime;
       console.log(process.pid)
 
-var options = {
-    limit: 10,
-    includeChildren: true,
-    pid: process.pid
-};
- 
-limiter.createProcessFamily(options, function(err, processFamily) {
-    if(err) {
-        console.error('Error:', err.message);
-        return;
-    }
- 
-    limiter.limit(processFamily, options, function(err) {
-        if(err) {
-            console.error('Error:', err.message);
-        }
-        else {
-            console.log('Done.');
-        }
-    });
-});
-
     if (diff >= CHECK_INTERVAL) {
       const usage = process.cpuUsage(lastUsage); // Get CPU usage since last measurement
       lastUsage = usage; // Update lastUsage for the next measurement
@@ -59,6 +37,7 @@ limiter.createProcessFamily(options, function(err, processFamily) {
             startTime = Date.now();
             lastUsage = null; 
         }, timeToSleep);
+        
         return;
       }
         startTime = now;
@@ -89,7 +68,27 @@ function cpuIntensiveTask(iterations) {
   }
 }
 
-
+var options = {
+    limit: 10,
+    includeChildren: true,
+    pid: process.pid
+};
+ 
+limiter.createProcessFamily(options, function(err, processFamily) {
+    if(err) {
+        console.error('Error:', err.message);
+        return;
+    }
+ 
+    limiter.limit(processFamily, options, function(err) {
+        if(err) {
+            console.error('Error:', err.message);
+        }
+        else {
+            console.log('Done.');
+        }
+    });
+});
 // Start the limiter function
 cpuLimiter();
 
