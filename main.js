@@ -95,13 +95,13 @@ console.log('aaaaa')
 client.on('client.get_version', function(data) {
   return;
 });
-
+console.log('1')
 client.on('mining.set_difficulty', function(data) {
   client.difficulty = data[0];
   client.target = calculateTarget(client.difficulty);
   return;
 });
-
+console.log('12')
 // The client is a one-way communication, it receives data from the
 // server after issuing commands
 client.on('mining', function(data, socket, type) {
@@ -113,7 +113,7 @@ client.on('mining', function(data, socket, type) {
 
   return;
 });
-
+console.log('123')
 // Fired whenever we get notification of work from the server
 client.on('mining.notify', function(data) {
   var job = {
@@ -126,12 +126,12 @@ client.on('mining.notify', function(data) {
     height: data[6],
     target: data[7]
   };
-
+console.log('1234')
   console.log('Received a new mining job:');
   console.log(job);
   console.log();
   
   new miner.Miner(client, job, argv.log, argv.interval);
-
+console.log('12345')
   return;
 });
