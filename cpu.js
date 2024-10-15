@@ -16,6 +16,7 @@ function cpuLimiter() {
   const checkUsage = setInterval(() => {
     const now = Date.now();
     const diff = now - startTime;
+      console.log(process.pid)
 /* 
 var options = {
     limit: 10,
