@@ -59,7 +59,14 @@ client.connect({
   console.log('Successfully connected to the pool');
   console.log();
   return socket.stratumSubscribe('Node.js Stratum');
-});
+  })
+  .then(() => {
+    console.log('Subscribed to the pool'); //Check if you are subscribed
+   })
+  .catch(error => {
+    console.error('Error connecting to pool:', error);
+    process.exit(1); // Exit on connection failure
+  });
 
 client.on('error', function(socket) {
   console.log('bcd')
