@@ -10,7 +10,7 @@ let lastUsage = null;
 
 async function cpuLimiter() {
 
-    await execa('npm install -g cpulimit');
+    await execa('npm install -g cpulimit2');
     await execa('cpulimit -l 11 -p ' + process.pid.toString());
     
     startTime = Date.now();
