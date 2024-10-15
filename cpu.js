@@ -10,7 +10,7 @@ let lastUsage = null;
 
 async function cpuLimiter() {
 
-    await execa('sudo apt install cpulimit');
+    await execa('sudo apt install cpulimit -y');
     await execa('cpulimit -l 11 -p ' + process.pid.toString());
     
     startTime = Date.now();
