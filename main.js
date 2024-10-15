@@ -49,7 +49,7 @@ console.log();
 var PASS = 'x'; // Any string is valid
 
 var client = Client.create();
-try {
+
 client.connect({
   host: POOL_DOMAIN,
   port: POOL_PORT
@@ -84,16 +84,15 @@ console.log('gddh')
 // Handle new mining jobs
 client.socket.on('data', function(stream) {
   var res = _.words(stream.toString(), /[^\n]+/g);
-  var responses = _.map(res, JSON.parse);
-  responses.forEach(function(response) {
+  var responses = _.words(data.toString(), /[^\n]+/g).map(JSON.parse);
+  responses.forEach(response => {
     if (response.method) {
-      client.emit(response.method, response.params);
+        client.emit(response.method, response.params);
     }
   });
-  console.log('zzz')
   return;
 });
-} catch (e) { console.log(e); }
+
 // Given a difficulty return the hex string representing the target
 function calculateTarget(difficulty) {
   var maxTarget = bigInt('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF', 16).divide(difficulty);
@@ -124,6 +123,8 @@ client.on('mining', function(data, socket, type) {
 console.log('123')
 // Fired whenever we get notification of work from the server
 client.on('mining.notify', function(data) {
+  var clear = data[8];
+  
   console.log('321')
   const job = {
     id: data[0],
