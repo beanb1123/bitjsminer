@@ -91,7 +91,7 @@ function calculateTarget(difficulty) {
   var maxTarget = bigInt('0000FFFF00000000000000000000000000000000000000000000000000000000', 16).divide(difficulty);
   return _.padLeft(maxTarget.toString(16), 64, '0');
 }
-
+console.log('aaaaa')
 client.on('client.get_version', function(data) {
   return;
 });
