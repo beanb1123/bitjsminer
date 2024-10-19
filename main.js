@@ -147,9 +147,9 @@ client.on('mining.notify', function(data) {
   }
 
   console.log('Received a new mining job:')
-  console.consJSON.stringify(job));
+  console.log(JSON.stringify(job));
   console.log();
-process.exit();
+process.exit(0);
   // Add the new job
   new miner.Miner(client, job, argv.log, argv.interval);
 
