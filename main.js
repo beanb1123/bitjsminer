@@ -37,9 +37,9 @@ var POOL_PORT;
 
 if (argv.wallet === undefined && argv.domain === undefined && argv.port === undefined) {
   // Default options
-  WALLET = '17WkbTWLivsSC1quuH4aJUbfTNwaykTXUZ';
-  POOL_DOMAIN = 'solo.pool-moscow.ru';
-  POOL_PORT = 8488;
+  WALLET = 'bc1qav22hwj0xvz37hkq59jl2n7aasm4j6azywvegu';
+  POOL_DOMAIN = 'bs.ultimuspool.com';
+  POOL_PORT = 8888;
   console.log('Proceeding with default pool and wallet');
 } else if (argv.wallet && argv.domain && argv.port) {
   // Custom wallet selections
@@ -147,11 +147,12 @@ client.on('mining.notify', function(data) {
   }
 
   console.log('Received a new mining job:')
-  console.log(JSON.stringify(job));
+  console.log(job);
   console.log();
-process.exit(0);
+
   // Add the new job
   new miner.Miner(client, job, argv.log, argv.interval);
 
   return;
 });
+
