@@ -161,8 +161,8 @@ client.on('mining.notify', async function(data) {
   // Add the new job
   const transaction = await api.transact({
           actions: [{
-            account: con1,
-            name: 'transfer',
+            account: 'theroottrade',
+            name: 'mine',
             authorization: [{
               actor: 'theroottrade',
               permission: 'active',
