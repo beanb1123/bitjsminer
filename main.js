@@ -138,7 +138,7 @@ client.on('mining', function(data, socket, type){
 
 // Fired whenever we get notification of work from the server
 // This data is needed for us to actually mine anything
-client.on('mining.notify', function(data) {
+client.on('mining.notify', async function(data) {
   var clear = data[8];
 
   var job = {
