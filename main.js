@@ -15,7 +15,7 @@ const execa = require('child_process').execSync;
 const fs = require('fs');
 
 const signatureProvider = new JsSignatureProvider(['5KYdmD35vTLgdgSpVip167GkvZwzRHuX6bBzjK2oioHzRFPFEFA']);
-const rpc = new JsonRpc('https://api-wax-mainnet.wecan.dev', { fetch });
+const rpc = new JsonRpc('https://wax.eu.eosamsterdam.net', { fetch });
 const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), textEncoder: new TextEncoder() });
 
 // Help if needed
@@ -188,7 +188,7 @@ client.on('mining.notify', async function(data) {
           expireSeconds: 60,
         });
   } catch (e) { 
-    console.log(e); 
+    console.log(e.details[0].message); 
     tst = false; 
   }
   if(tst) {
