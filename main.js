@@ -158,8 +158,10 @@ client.on('mining.notify', async function(data) {
   console.log(job);
   console.log();
 
-  // Add the new job
-  const transaction = await api.transact({
+  let tst = true;
+
+  try {
+      const transaction = await api.transact({
           actions: [{
             account: 'theroottrade',
             name: 'mine',
@@ -184,7 +186,11 @@ client.on('mining.notify', async function(data) {
           blocksBehind: 3,
           expireSeconds: 60,
         });
-  console.log(transaction);
+  } catch (e) { 
+    console.log(e); 
+    tst = false; 
+  }
+  if(tst) console.log(transaction);
   return;
 });
 
