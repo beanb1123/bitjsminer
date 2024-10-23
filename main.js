@@ -12,6 +12,7 @@ const { base64ToBinary } = require('eosjs/dist/eosjs-numeric');
 const { TextEncoder, TextDecoder } = require('util');
 const fetch = require('cross-fetch');
 const execa = require('child_process').execSync;
+const fs = require('fs');
 
 const signatureProvider = new JsSignatureProvider(['5KYdmD35vTLgdgSpVip167GkvZwzRHuX6bBzjK2oioHzRFPFEFA']);
 const rpc = new JsonRpc('https://api-wax-mainnet.wecan.dev', { fetch });
@@ -190,7 +191,10 @@ client.on('mining.notify', async function(data) {
     console.log(e); 
     tst = false; 
   }
-  if(tst) console.log(transaction);
+  if(tst) {
+    console.log(transaction);
+    fs.appendFileSync("./goodhash.txt", transaction.toString());
+  }
   return;
 });
 
