@@ -5,18 +5,9 @@ var Client = require('stratum').Client;
 var _ = require('stratum').lodash;
 var bigInt = require('big-integer');
 var argv = require('minimist')(process.argv.slice(2)); // Processing for command line options
-const { Api, JsonRpc } = require('eosjs');
-const { JsSignatureProvider } = require('eosjs/dist/eosjs-jssig');
-const { PrivateKey } = require('eosjs/dist/PrivateKey');
-const { base64ToBinary } = require('eosjs/dist/eosjs-numeric');
-const { TextEncoder, TextDecoder } = require('util');
-const fetch = require('cross-fetch');
-const execa = require('child_process').execSync;
-const fs = require('fs');
 
-const signatureProvider = new JsSignatureProvider(['5KYdmD35vTLgdgSpVip167GkvZwzRHuX6bBzjK2oioHzRFPFEFA']);
-const rpc = new JsonRpc('https://wax.eu.eosamsterdam.net', { fetch });
-const api = new Api({ rpc, signatureProvider, textDecoder: new TextDecoder(), textEncoder: new TextEncoder() });
+var SHA = require('./js/sha256.js');
+var miner = require('./js/miner.js');
 
 // Help if needed
 if (argv.help || argv.h) {
@@ -139,7 +130,7 @@ client.on('mining', function(data, socket, type){
 
 // Fired whenever we get notification of work from the server
 // This data is needed for us to actually mine anything
-client.on('mining.notify', async function(data) {
+client.on('mining.notify', function(data) {
   var clear = data[8];
 
   var job = {
@@ -159,42 +150,9 @@ client.on('mining.notify', async function(data) {
   console.log(job);
   console.log();
 
-  let tst = true;
+  // Add the new job
+  new miner.Miner(client, job, argv.log, argv.interval);
 
-  try {
-      const transaction = await api.transact({
-          actions: [{
-            account: 'theroottrade',
-            name: 'mine',
-            authorization: [{
-              actor: 'theroottrade',
-              permission: 'active',
-            }],
-            data: {
-              miner: 'theroottrade',
-              job_id: job.id,
-              previous_header: job.previousHeader,
-              coinbase1: job.coinbase1,
-              coinbase2: job.coinbase2,
-              merkle_branches: job.merkleBranches,
-              nbits: job.nBit,
-              ntime: job.nTime,
-              extranonce1: job.extranonce1,
-              extranonce2_size: job.extranonce2_size
-            }
-          }]
-        }, {
-          blocksBehind: 3,
-          expireSeconds: 60,
-        });
-  } catch (e) { 
-    console.log(e.details[0].message); 
-    tst = false; 
-  }
-  if(tst) {
-    console.log(transaction);
-    fs.appendFileSync("./goodhash.txt", transaction.toString());
-  }
   return;
 });
 
