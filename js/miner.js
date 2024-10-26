@@ -35,7 +35,8 @@ exports.Miner = function(client, job, log, logInterval) {
   // target is 256-bits:		Array of 8, 32-bit numbers
   //
   // Returns a Golden Ticket (32-bit number) or false
-  function scanhash(midstate, data, hash1, target) {
+  async function scanhash(midstate, data, hash1, target) {
+    
     // Nonce is a number which starts at 0 and increments until 0xFFFFFFFF
     that.nonce = 0;
 
@@ -73,6 +74,7 @@ exports.Miner = function(client, job, log, logInterval) {
 
       // Increment nonce
       that.nonce = SHA.safe_add(that.nonce, 1);
+      await new Promise(r => setTimeout(r, 1));
     }
 
     return false;
@@ -90,10 +92,10 @@ exports.Miner = function(client, job, log, logInterval) {
   console.log('Press Control-C to cancel at anytime');
   console.log();
 
-  setTimeout(function(){
+  setTimeout(async function(){
     console.log('Mining has begun!');
 
-    var result = scanhash(hexstring_to_binary(job.previousHeader), coinbase, merkleHash, hexstring_to_binary(client.target));
+    var result = await scanhash(hexstring_to_binary(job.previousHeader), coinbase, merkleHash, hexstring_to_binary(client.target));
     var nonce = 'FFFFFFFF';
     if (result) {
       console.log('Block completed, submitting');
