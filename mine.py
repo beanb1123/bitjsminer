@@ -88,23 +88,13 @@ def hexstring_to_binary(hex_str):
     if len(hex_str) % 2 != 0:
         raise ValueError("Hex string must have an even length")
     
-    if not hex_str:  # Check if the string is empty
-        return []
-
     result = []
     for i in range(0, len(hex_str), 8):
         number = 0x00000000
         for j in range(4):
-            # Calculate start index for the slice
-            start_index = i + j * 2
-            # Check if we can safely slice two characters
-            if start_index + 2 > len(hex_str):
-                break  # Exit if we cannot slice two characters
-            slice_str = hex_str[start_index:start_index + 2]
-            number += hex_to_byte(slice_str) << (j * 8)
+            number += hex_to_byte(hex_str[i + j * 2:i + j * 2 + 2]) << (j * 8)
         result.append(number)
     return result
-
 
 def hex_to_byte(hex_str):
     return int(hex_str, 16)
@@ -142,7 +132,6 @@ job = {
     'nBit': '18163ad8',
     'nTime': '6721ef90',
     'extranonce1': 'f0005a4a',
-    'extranonce2': 'f0005a4a',
     'extranonce2_size': 4
 }
 
