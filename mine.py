@@ -2,7 +2,8 @@ import time
 import hashlib
 import struct
 from functools import reduce
-import tracemalloc  # Import tracemalloc module
+import tracemalloc
+import asyncio
 
 DEFAULT_LOG_INTERVAL = 10
 
