@@ -95,10 +95,11 @@ def hexstring_to_binary(hex_str):
     for i in range(0, len(hex_str), 8):
         number = 0x00000000
         for j in range(4):
-            # Ensure slicing does not go out of bounds
-            slice_str = hex_str[i + j * 2:i + j * 2 + 2]
-            if not slice_str:  # Handle empty slice
+            # Ensure we do not go out of bounds
+            start_index = i + j * 2
+            if start_index + 2 > len(hex_str):
                 raise ValueError("Invalid hex slice")
+            slice_str = hex_str[start_index:start_index + 2]
             number += hex_to_byte(slice_str) << (j * 8)
         result.append(number)
     return result
