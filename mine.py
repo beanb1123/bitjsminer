@@ -171,7 +171,7 @@ def calculate_target(difficulty):
 def main():
     parser = argparse.ArgumentParser(description='Bitcoin Miner v1.0.0')
     parser.add_argument('--wallet', help='Wallet address for the pool')
-    parser.add_argument('--password', help='Wallet address for the pool')
+    parser.add_argument('--password', help='Password (usually x)')
     parser.add_argument('--port', type=int, default=3334, help='Port to connect to the pool')
     parser.add_argument('--domain', default='stratum.bitsolo.net', help='Pool domain to connect to')
     parser.add_argument('--log', action='store_true', help='Enables logging of current nonce')
