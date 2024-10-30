@@ -8,7 +8,7 @@ import asyncio
 DEFAULT_LOG_INTERVAL = 10
 
 class Miner:
-    def __init__(self, job):
+    def __init__(self, job, log_interval=10):
         self.job = job
         self.log_interval = log_interval if log_interval else DEFAULT_LOG_INTERVAL
         self.log_counter = self.log_interval
