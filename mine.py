@@ -132,6 +132,6 @@ job = {
 
 # Example usage
 if __name__ == "__main__":
- #   tracemalloc.start()  # Start tracking memory allocations
+    tracemalloc.start()  # Start tracking memory allocations
     Miner(job).start_mining()
     
