@@ -8,7 +8,7 @@ import asyncio
 DEFAULT_LOG_INTERVAL = 10
 
 class Miner:
-    def __init__(self, job, log, log_interval=None):
+    def __init__(self, job):
         self.job = job
         self.log_interval = log_interval if log_interval else DEFAULT_LOG_INTERVAL
         self.log_counter = self.log_interval
@@ -133,5 +133,5 @@ job = {
 # Example usage
 if __name__ == "__main__":
     tracemalloc.start()  # Start tracking memory allocations
-    miner = Miner(job, log=True)
+    miner = Miner(job)
     asyncio.run(miner.start_mining())
