@@ -2,11 +2,13 @@ import time
 import hashlib
 import struct
 from functools import reduce
+import tracemalloc  # Import tracemalloc module
 
 DEFAULT_LOG_INTERVAL = 10
 
 class Miner:
-    def __init__(self, job, log, log_interval=None):
+    def __init__(self, client, job, log, log_interval=None):
+        self.client = client
         self.job = job
         self.log_interval = log_interval if log_interval else DEFAULT_LOG_INTERVAL
         self.log_counter = self.log_interval
@@ -44,7 +46,7 @@ class Miner:
 
         return False
 
-    async def start_mining(self):
+    def start_mining(self):
         coinbase_str = self.job['coinbase1'] + self.job['extranonce1'] + self.job['extranonce2'] + self.job['coinbase2']
         coinbase = hexstring_to_binary(coinbase_str)
         merkle_hash = reduce(lambda hash, merkle: sha256_chunk(hash, merkle), self.job['merkleBranches'], SHA_256_INITIAL_STATE)
@@ -56,7 +58,20 @@ class Miner:
         time.sleep(3)  # Simulate delay before starting mining
         print('Mining has begun!')
 
-        result = await self.scanhash(hexstring_to_binary(self.job['previousHeader']), coinbase, merkle_hash, hexstring_to_binary('0x000000000000000000000000000000000000000000000000000000000000000F'))
+        # Capture the memory allocation snapshot before mining
+        snapshot_before = tracemalloc.take_snapshot()
+        
+        result = await self.scanhash(hexstring_to_binary(self.job['previousHeader']), coinbase, merkle_hash, hexstring_to_binary(self.client['target']))
+        
+        # Capture the memory allocation snapshot after mining
+        snapshot_after = tracemalloc.take_snapshot()
+        
+        # Compare the snapshots to see memory allocations
+        top_stats = snapshot_after.compare_to(snapshot_before, 'lineno')
+        print("[ Top 10 memory allocations ]")
+        for stat in top_stats[:10]:
+            print(stat)
+
         nonce = 'FFFFFFFF'
         if result:
             print('Block completed, submitting')
@@ -64,10 +79,9 @@ class Miner:
         else:
             print('Share completed, submitting')
 
-        print('NONCE: ', result)
+        self.client.submit(self.client['id'], self.job['id'], self.job['extranonce2'], self.job['nTime'], nonce)
 
 def is_golden_hash(hash, target):
-    # Checks if the hash is less than or equal to the target
     return hash[7] == 0x00000000
 
 def hexstring_to_binary(hex_str):
@@ -84,8 +98,6 @@ def hex_to_byte(hex_str):
 
 # Example SHA helper functions (you need to implement these)
 def sha256_chunk(midstate, data):
-    # Placeholder for SHA-256 chunk processing
-    # Use hashlib or implement your own SHA-256 logic
     return list(struct.unpack('>8L', hashlib.sha256(b''.join(map(lambda x: struct.pack('>L', x), midstate + data))).digest()))
 
 def safe_add(a, b):
@@ -119,6 +131,7 @@ job = {
 }
 
 # Example usage
-# client and job should be defined as per your application's requirements
-miner = Miner(job, log=True)
-miner.start_mining()
+if __name__ == "__main__":
+    tracemalloc.start()  # Start tracking memory allocations
+    miner = Miner(job, log=True)
+    asyncio.run(miner.start_mining())
