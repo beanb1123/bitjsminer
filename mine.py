@@ -47,7 +47,7 @@ class Miner:
         return None  # Changed to None for clarity
 
     async def start_mining(self):
-        coinbase_str = self.job['coinbase1'] + self.job['extranonce1'] + self.job['extranonce2'] + self.job['coinbase2']
+        coinbase_str = self.job['coinbase1'] + self.job['extranonce1'] + self.job['extranonce2_size'] + self.job['coinbase2']
         coinbase = hexstring_to_binary(coinbase_str)
         merkle_hash = reduce(lambda hash, merkle: sha256_chunk(hash, merkle), self.job['merkleBranches'], SHA_256_INITIAL_STATE)
 
@@ -79,7 +79,7 @@ class Miner:
         else:
             print('Share completed, submitting')
 
-        print(self.job['id'], self.job['extranonce2'], self.job['nTime'], nonce)
+        print(self.job['id'], self.job['extranonce1'], self.job['nTime'], nonce)
 
 def is_golden_hash(hash, target):
     return hash[7] == 0x00000000
