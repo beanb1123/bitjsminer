@@ -132,6 +132,6 @@ job = {
 
 # Example usage
 if __name__ == "__main__":
-    tracemalloc.start()  # Start tracking memory allocations
-    miner = Miner(job)
-    asyncio.run(miner.start_mining())
+ #   tracemalloc.start()  # Start tracking memory allocations
+    Miner(job).start_mining()
+    
