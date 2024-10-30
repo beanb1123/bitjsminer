@@ -133,6 +133,6 @@ job = {
 }
 
 async def run():
-    await Miner(job).start_mining()
+    await Miner(job, 10).start_mining()
 
 run()
