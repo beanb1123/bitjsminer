@@ -130,6 +130,7 @@ job = {
   'extranonce2_size': 4
 }
 
-Miner(job, 10).start_mining()
+miner = Miner(job, 10)
+miner.start_mining()
 
 
