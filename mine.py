@@ -85,8 +85,8 @@ def is_golden_hash(hash, target):
     return hash[7] == 0x00000000
 
 def hexstring_to_binary(hex_str):
-    if len(hex_str) % 2 != 0:
-        raise ValueError("Hex string must have an even length")
+#    if len(hex_str) % 2 != 0:
+#        raise ValueError("Hex string must have an even length")
     
     result = []
     for i in range(0, len(hex_str), 8):
