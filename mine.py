@@ -130,8 +130,8 @@ job = {
   'extranonce2_size': 4
 }
 
-# Example usage
-if __name__ == "__main__":
+async def run()
     tracemalloc.start()  # Start tracking memory allocations
-    Miner(job).start_mining()
+    await Miner(job).start_mining()
     
+run()
