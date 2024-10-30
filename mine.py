@@ -16,7 +16,6 @@ class Miner:
         self.nonce = 0
 
     async def scanhash(self, midstate, data, hash1, target):
-        tracemalloc.start()
         self.nonce = 0
 
         while True:
@@ -44,7 +43,6 @@ class Miner:
 
             # Increment nonce
             self.nonce = safe_add(self.nonce, 1)
-            await asyncio.sleep(0.001)
 
         return False
 
@@ -132,7 +130,6 @@ job = {
   'extranonce2_size': 4
 }
 
-async def run():
-    await Miner(job, 10).start_mining()
+Miner(job, 10).start_mining()
 
-run()
+
