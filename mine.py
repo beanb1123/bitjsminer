@@ -1,11 +1,9 @@
 import asyncio
 import hashlib
 import struct
-import sys
-import argparse
 import socket
 import json
-import bigInt
+import argparse
 
 DEFAULT_LOG_INTERVAL = 10000
 
@@ -167,8 +165,8 @@ SHA_256_INITIAL_STATE = struct.pack('<8I',
 )
 
 def calculate_target(difficulty):
-    max_target = bigInt('0000FFFF00000000000000000000000000000000000000000000000000000000', 16) // difficulty
-    return max_target.toString(16).zfill(64)
+    max_target = (0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF // difficulty)
+    return hex(max_target)[2:].zfill(64)
 
 def main():
     parser = argparse.ArgumentParser(description='Bitcoin Miner v1.0.0')
