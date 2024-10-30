@@ -61,7 +61,7 @@ class Miner:
         # Capture the memory allocation snapshot before mining
         snapshot_before = tracemalloc.take_snapshot()
         
-        result = await self.scanhash(hexstring_to_binary(self.job['previousHeader']), coinbase, merkle_hash, hexstring_to_binary(self.client['target']))
+        result = await self.scanhash(hexstring_to_binary(self.job['previousHeader']), coinbase, merkle_hash, hexstring_to_binary('0x000000000000000000000000000000000000000000000000000000000000000F'))
         
         # Capture the memory allocation snapshot after mining
         snapshot_after = tracemalloc.take_snapshot()
@@ -79,7 +79,7 @@ class Miner:
         else:
             print('Share completed, submitting')
 
-        self.client.submit(self.client['id'], self.job['id'], self.job['extranonce2'], self.job['nTime'], nonce)
+        print(self.client['id'], self.job['id'], self.job['extranonce2'], self.job['nTime'], nonce)
 
 def is_golden_hash(hash, target):
     return hash[7] == 0x00000000
