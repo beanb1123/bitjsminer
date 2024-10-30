@@ -95,14 +95,16 @@ def hexstring_to_binary(hex_str):
     for i in range(0, len(hex_str), 8):
         number = 0x00000000
         for j in range(4):
-            # Ensure we do not go out of bounds
+            # Calculate start index for the slice
             start_index = i + j * 2
+            # Check if we can safely slice two characters
             if start_index + 2 > len(hex_str):
-                raise ValueError("Invalid hex slice")
+                break  # Exit if we cannot slice two characters
             slice_str = hex_str[start_index:start_index + 2]
             number += hex_to_byte(slice_str) << (j * 8)
         result.append(number)
     return result
+
 
 def hex_to_byte(hex_str):
     return int(hex_str, 16)
