@@ -9,12 +9,14 @@ DEFAULT_LOG_INTERVAL = 10
 
 class Miner:
     def __init__(self, job, log_interval=10):
+    
         self.job = job
         self.log_interval = log_interval if log_interval else DEFAULT_LOG_INTERVAL
         self.log_counter = self.log_interval
         self.nonce = 0
 
     async def scanhash(self, midstate, data, hash1, target):
+        tracemalloc.start()
         self.nonce = 0
 
         while True:
@@ -133,5 +135,4 @@ job = {
 async def run():
     await Miner(job).start_mining()
 
-tracemalloc.start()  # Start tracking memory allocations
 run()
