@@ -29,7 +29,7 @@ class Client:
         self.send({"method": "mining.subscribe", "params": []})
         response = await self.recv()
         print("Successfully connected to the pool")
-        self.emit("mining.subscribe", response)
+        self.emit("mining.notify", response)
 
     def emit(self, method, params):
         if method == "mining.subscribe":
