@@ -132,7 +132,7 @@ job = {
     'nBit': '18163ad8',
     'nTime': '6721ef90',
     'extranonce1': 'f0005a4a',
-    'extranonce2': '00000000',
+    'extranonce2': 'f0005a4a',
     'extranonce2_size': 4
 }
 
