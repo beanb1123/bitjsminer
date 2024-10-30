@@ -130,7 +130,7 @@ job = {
   'extranonce2_size': 4
 }
 
-async def run()
+async def run():
     tracemalloc.start()  # Start tracking memory allocations
     await Miner(job).start_mining()
     
