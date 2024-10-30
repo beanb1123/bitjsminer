@@ -131,7 +131,7 @@ job = {
 }
 
 async def run():
-    tracemalloc.start()  # Start tracking memory allocations
     await Miner(job).start_mining()
-    
+
+tracemalloc.start()  # Start tracking memory allocations
 run()
