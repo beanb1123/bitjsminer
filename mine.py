@@ -47,7 +47,7 @@ class Miner:
         return None  # Changed to None for clarity
 
     async def start_mining(self):
-        coinbase_str = self.job['coinbase1'] + self.job['extranonce1'] + str(self.job['extranonce2_size']) + self.job['coinbase2']
+        coinbase_str = self.job['coinbase1'] + self.job['extranonce1'] + self.job['extranonce2'] + self.job['coinbase2']
         coinbase = hexstring_to_binary(coinbase_str)
         merkle_hash = reduce(lambda hash, merkle: sha256_chunk(hash, merkle), self.job['merkleBranches'], SHA_256_INITIAL_STATE)
 
@@ -79,22 +79,18 @@ class Miner:
         else:
             print('Share completed, submitting')
 
-        print(self.job['id'], self.job['extranonce1'], self.job['nTime'], nonce)
+        print(self.job['id'], self.job['extranonce2'], self.job['nTime'], nonce)
 
 def is_golden_hash(hash, target):
     return hash[7] == 0x00000000
 
 def hexstring_to_binary(hex_str):
-#    if len(hex_str) % 2 != 0:
-#        raise ValueError("Hex string must have an even length")
-    
-    result = []
-    for i in range(0, len(hex_str), 8):
-        number = 0x00000000
-        for j in range(4):
-            number += hex_to_byte(hex_str[i + j * 2:i + j * 2 + 2]) << (j * 8)
-        result.append(number)
-    return result
+
+    scale = 16 ## equals to hexadecimal
+
+    num_of_bits = 8
+
+    return bin(int(hex_str, scale))[2:].zfill(num_of_bits)
 
 def hex_to_byte(hex_str):
     return int(hex_str, 16)
@@ -132,6 +128,7 @@ job = {
     'nBit': '18163ad8',
     'nTime': '6721ef90',
     'extranonce1': 'f0005a4a',
+    'extranonce2': '00000000',
     'extranonce2_size': 4
 }
 
