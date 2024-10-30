@@ -6,8 +6,7 @@ from functools import reduce
 DEFAULT_LOG_INTERVAL = 10
 
 class Miner:
-    def __init__(self, client, job, log, log_interval=None):
-        self.client = client
+    def __init__(self, job, log, log_interval=None):
         self.job = job
         self.log_interval = log_interval if log_interval else DEFAULT_LOG_INTERVAL
         self.log_counter = self.log_interval
@@ -57,7 +56,7 @@ class Miner:
         time.sleep(3)  # Simulate delay before starting mining
         print('Mining has begun!')
 
-        result = await self.scanhash(hexstring_to_binary(self.job['previousHeader']), coinbase, merkle_hash, hexstring_to_binary(self.client['target']))
+        result = await self.scanhash(hexstring_to_binary(self.job['previousHeader']), coinbase, merkle_hash, hexstring_to_binary('0x000000000000000000000000000000000000000000000000000000000000000F'))
         nonce = 'FFFFFFFF'
         if result:
             print('Block completed, submitting')
@@ -65,7 +64,7 @@ class Miner:
         else:
             print('Share completed, submitting')
 
-        self.client.submit(self.client['id'], self.job['id'], self.job['extranonce2'], self.job['nTime'], nonce)
+        print('NONCE: ', result)
 
 def is_golden_hash(hash, target):
     # Checks if the hash is less than or equal to the target
@@ -94,5 +93,5 @@ def safe_add(a, b):
 
 # Example usage
 # client and job should be defined as per your application's requirements
-miner = Miner(client, job, log=True)
+miner = Miner(job, log=True)
 miner.start_mining()
