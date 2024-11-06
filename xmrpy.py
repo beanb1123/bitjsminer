@@ -1,6 +1,5 @@
-import pyrx
-import json
 import time
+import json
 import binascii
 import struct
 import threading
@@ -8,6 +7,7 @@ import psutil
 import socket
 import select
 from datetime import datetime
+from cryptonight import hash as cryptonight_hash
 
 class GentleMiner:
     def __init__(self, pool_host, pool_port, wallet_address, thread_count=1, cpu_limit=10):
@@ -91,28 +91,39 @@ class GentleMiner:
     def mine_block(self, thread_id):
         """Mining function for each thread"""
         nonce = thread_id
+        shares_found = 0
+        hashes = 0
+        start_time = time.time()
         
         while self.should_mine:
             if not self.job:
                 time.sleep(1)
                 continue
 
-            # Prepare input for RandomX
             try:
+                # Prepare input for hashing
                 blob = binascii.unhexlify(self.job['blob'])
-                seed_hash = binascii.unhexlify(self.job['seed_hash'])
                 target = int(self.job['target'], 16)
                 
                 # Update nonce in blob
                 blob = blob[:39] + struct.pack('<I', nonce) + blob[43:]
                 
-                # Calculate hash
-                result = pyrx.get_rx_hash(blob, seed_hash)
+                # Calculate hash using cryptonight variant 8 (CN/2)
+                result = cryptonight_hash(blob, 8)  # variant 8 for Monero v8
                 result_hash = binascii.hexlify(result).decode()
+                
+                hashes += 1
+                elapsed = time.time() - start_time
+                if elapsed > 60:  # Print hashrate every minute
+                    hashrate = hashes / elapsed
+                    print(f"Thread {thread_id} hashrate: {hashrate:.2f} H/s, Shares found: {shares_found}")
+                    hashes = 0
+                    start_time = time.time()
                 
                 # Check if hash meets target
                 if int(result_hash, 16) < target:
                     print(f"Share found by thread {thread_id}!")
+                    shares_found += 1
                     if self.submit_share(result_hash, nonce):
                         print("Share accepted!")
                     else:
