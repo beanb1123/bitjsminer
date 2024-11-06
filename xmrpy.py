@@ -7,7 +7,7 @@ import psutil
 import socket
 import select
 from datetime import datetime
-from py-cryptonight import hash as cryptonight_hash
+from py_cryptonight import hash as cryptonight_hash
 
 class GentleMiner:
     def __init__(self, pool_host, pool_port, wallet_address, thread_count=1, cpu_limit=10):
