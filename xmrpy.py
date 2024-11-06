@@ -91,28 +91,42 @@ class GentleMiner:
     def mine_block(self, thread_id):
         """Mining function for each thread"""
         nonce = thread_id
+        shares_found = 0
+        hashes = 0
+        start_time = time.time()
         
         while self.should_mine:
             if not self.job:
                 time.sleep(1)
                 continue
 
-            # Prepare input for RandomX
             try:
-                blob = binascii.unhexlify(self.job['blob'])
-                seed_hash = binascii.unhexlify(self.job['seed_hash'])
+                # Prepare input for RandomX
+                blob = self.job['blob']
+                seed_hash = self.job['seed_hash']
                 target = int(self.job['target'], 16)
                 
-                # Update nonce in blob
-                blob = blob[:39] + struct.pack('<I', nonce) + blob[43:]
+                # Update nonce in blob string
+                nonce_hex = format(nonce, '08x')
+                blob = blob[:78] + nonce_hex + blob[86:]  # 78 is the nonce position in hex string
                 
-                # Calculate hash
-                result = pyrx.get_rx_hash(blob, seed_hash)
-                result_hash = binascii.hexlify(result).decode()
+                # Calculate hash using correct pyrx function signature
+                # The third parameter (variant) is usually 0 for RandomX
+                result = pyrx.get_rx_hash(blob, seed_hash, 0)
+                result_hash = result.hex()
+                
+                hashes += 1
+                elapsed = time.time() - start_time
+                if elapsed > 60:  # Print hashrate every minute
+                    hashrate = hashes / elapsed
+                    print(f"Thread {thread_id} hashrate: {hashrate:.2f} H/s, Shares found: {shares_found}")
+                    hashes = 0
+                    start_time = time.time()
                 
                 # Check if hash meets target
                 if int(result_hash, 16) < target:
                     print(f"Share found by thread {thread_id}!")
+                    shares_found += 1
                     if self.submit_share(result_hash, nonce):
                         print("Share accepted!")
                     else:
