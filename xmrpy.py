@@ -33,7 +33,7 @@ class GentleMiner:
             return False
 
     def send_request(self, method, params):
-    """Send request to pool"""
+    
     request = {
         "method": method,
         "params": params,
