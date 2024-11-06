@@ -33,38 +33,38 @@ class GentleMiner:
             return False
 
     def send_request(self, method, params):
-    
-    request = {
-        "method": method,
-        "params": params,
-        "id": self.id
-    }
-    self.id += 1
-    
-    try:
-        self.socket.send((json.dumps(request) + "\n").encode())
-        ready = select.select([self.socket], [], [], 10)
-        if ready[0]:
-            response = self.socket.recv(4096)
-            return json.loads(response.decode())
-        return None
-    except json.JSONDecodeError as e:
-        print(f"JSON decode error in send_request: {e}")
-        return None
-    except socket.error as e:
-        print(f"Socket error in send_request: {e}")
-        self.reconnect_to_pool()  # Attempt to reconnect
-        return None
-    except Exception as e:
-        print(f"Error in send_request: {e}")
-        return None
+        """Send request to pool"""
+        request = {
+            "method": method,
+            "params": params,
+            "id": self.id
+        }
+        self.id += 1
+        
+        try:
+            self.socket.send((json.dumps(request) + "\n").encode())
+            ready = select.select([self.socket], [], [], 10)
+            if ready[0]:
+                response = self.socket.recv(4096)
+                return json.loads(response.decode())
+            return None
+        except json.JSONDecodeError as e:
+            print(f"JSON decode error in send_request: {e}")
+            return None
+        except socket.error as e:
+            print(f"Socket error in send_request: {e}")
+            self.reconnect_to_pool()  # Attempt to reconnect
+            return None
+        except Exception as e:
+            print(f"Error in send_request: {e}")
+            return None
 
-def reconnect_to_pool(self):
-    """Reconnect to the mining pool"""
-    print("Reconnecting to pool...")
-    self.socket.close()
-    self.connect_to_pool()
-
+    def reconnect_to_pool(self):
+        """Reconnect to the mining pool"""
+        print("Reconnecting to pool...")
+        self.socket.close()
+        if not self.connect_to_pool():
+            print("Failed to reconnect to pool")
 
     def login(self):
         """Login to pool"""
@@ -125,7 +125,6 @@ def reconnect_to_pool(self):
                 blob = blob[:78] + nonce_hex + blob[86:]  # 78 is the nonce position in hex string
                 
                 # Calculate hash using correct pyrx function signature
-                # The third parameter (variant) is usually 0 for RandomX
                 result = pyrx.get_rx_hash(blob, seed_hash, 0)
                 result_hash = result.hex()
                 
